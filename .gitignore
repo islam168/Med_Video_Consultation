@@ -219,3 +219,6 @@ envs/.env_local
 
 # pytest_cache
 .pytest_cache
+
+# static
+static/
