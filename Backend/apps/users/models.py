@@ -67,8 +67,13 @@ class Doctor(User):
         verbose_name='Квалификация',
     )
     birthdate = models.DateField(verbose_name='День рождение')
+    start_of_activity = models.DateField(
+        verbose_name='Время начала профессиональной деятельности',
+        blank=False,
+        null=True
+    )
     permission_to_consult = models.BooleanField(default=True, verbose_name='Разрешение на ведение консультации')
-    middle_name = models.CharField(blank=True, max_length=50, verbose_name='Отчетво')
+    middle_name = models.CharField(blank=True, max_length=50, verbose_name='Отчество')
 
     class Meta:
         verbose_name = 'Доктор'
@@ -86,7 +91,6 @@ class DoctorCard(models.Model):
         on_delete=models.CASCADE,
         db_column='doctor_id',  # явное указание имени поля внешнего ключа в БД
     )
-    commencement_of_operations = models.DateField(verbose_name='Время начала профессиональной деятельности')
     qualification = models.TextField(verbose_name='Квалификация')
     education = models.TextField(verbose_name='Образование')
     advanced_training = models.TextField(verbose_name='Повышение квалификации', blank=True, null=True)
@@ -96,4 +100,4 @@ class DoctorCard(models.Model):
         verbose_name_plural = 'Информационные карты докторов'
 
     def __str__(self):
-        return f"{self.doctor_id} {self.qualification}"
+        return f"Информационная карта: ID:{self.id}, Доктор:{self.doctor_id}"

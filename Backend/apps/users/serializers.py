@@ -34,9 +34,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
-class DoctorCardCreateSerializer(serializers.ModelSerializer):
-    doctor_id = DoctorSerializer(read_only=True)
+class DoctorCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DoctorCard
-        fields = ('doctor_id', 'commencement_of_operations', 'qualification', 'education', 'advanced_training')
+        fields = ['id', 'doctor_id', 'qualification', 'education', 'advanced_training']

@@ -1,7 +1,7 @@
 from datetime import date
 
-from apps.users.models import Patient, Doctor
-from apps.users.serializers import PatientCreateSerializer, DoctorCardCreateSerializer
+from apps.users.models import Patient, Doctor, DoctorCard
+from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer
 
 
 class RegistrationService:
@@ -24,20 +24,34 @@ class RegistrationService:
 
 class DoctorCardService:
     @staticmethod
-    def create_card_of_doctor(data):
-        length_of_service = data.get('length_of_service')
+    def create_doctor_card(data):
         doctor_id = data.get('doctor_id')
-        doctor_instance = Doctor.objects.get(id=doctor_id)
-        doctor_birthdate = doctor_instance.birthdate
-        today = date.today()
-        age_of_doctor = today.year - doctor_birthdate.year - (
-                    (today.month, today.day) < (doctor_birthdate.month, doctor_birthdate.day))
 
-        serializer = DoctorCardCreateSerializer(data=data)
+        if DoctorCard.objects.filter(doctor_id=doctor_id).exists():
+            return False, 'This doctor already has his card'
+
+        serializer = DoctorCardSerializer(data=data)
+
+        #  Обработка ошибок при неправильных введенных данных
         if serializer.is_valid():
-            if length_of_service + age_of_doctor < 50:
-                return False, 'The doctor\'s length of service does not match his age'
             serializer.save()
-            return True, 'User was successfully created'
+            return True, 'Card was successfully created'
         else:
             return False, serializer.errors
+
+    @staticmethod
+    def doctor_work_experience(data):
+        doctor_id = data.get('doctor_id')
+        doctor = Doctor.objects.get(id=doctor_id)
+        qualification = doctor.qualification
+        doctor_start_of_activity = doctor.start_of_activity
+        today = date.today()
+        doctor_work_experience = (today.year - doctor_start_of_activity.year) - (
+                (today.month, today.day) < (doctor_start_of_activity.month, doctor_start_of_activity.day))
+
+        information_about_doctor = {
+            'doctor_work_experience': doctor_work_experience,
+            'qualification': qualification,
+        }
+        print('Стаж работы', information_about_doctor)
+        return information_about_doctor
