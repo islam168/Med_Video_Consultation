@@ -1,0 +1,168 @@
+.container {
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.btn {
+    margin-right: 10px;
+}
+
+.text-danger {
+    margin-top: 10px;
+}
+
+.form-check-label {
+    font-family: "Arial", sans-serif;
+}
+
+.welcome-text .goal-getter {
+    color: #434AF0;
+}
+
+.background {
+    /*background-image: url('./login.png');*/
+    background-repeat: no-repeat;
+    background-size: 52%;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+}
+
+.transparent-bg {
+    /* Ваши существующие стили */
+    margin: 50px auto;
+    padding: 22.5px;
+    border-radius: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: auto;
+
+    /* Тень */
+    box-shadow: 0px 3px 5px 2px rgba(0, 0, 0, 0.4);
+}
+
+
+.title-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-wrapper h2 {
+    margin-bottom: 30px;
+}
+
+.login-btn{
+    margin-top: 8%;
+    margin-bottom: 8%;
+}
+.login-btn .text-button{
+
+    color: black; /* Установка черного цвета текста */
+    text-decoration: none; /* Убирает подчеркивание */
+    cursor: pointer; /* Добавляет указатель при наведении (опционально) */
+}
+/* Стиль для кнопки "Зарегистрироваться" */
+.registration-btn {
+    /* Ваши существующие стили */
+    margin-top: 4%;
+    background-color: #434AF0;
+    color: #fff;
+    padding: 15px 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    max-width: 300px;
+    position: relative; /* Добавляем позиционирование для псевдоэлемента */
+}
+
+/* Стиль для ссылки "Уже есть аккаунт?" */
+.login-btn .text-button {
+    /* Ваши существующие стили */
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Псевдоэлемент для создания черной линии */
+.registration-btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    margin-top: 20%;
+    margin-bottom: 30%;
+    height: 1px; /* Высота линии */
+    background-color: grey; /* Цвет линии */
+}
+
+
+.login-btn {
+    margin-bottom: 8%;
+}
+
+
+.left-align-label {
+    text-align: left;
+}
+/* Стиль для поля ввода (input) */
+/* Стиль для форм-группы */
+.form-group {
+    text-align: left; /* Выравнивание текста по левому краю */
+    width: 70%;
+}
+
+/* Стиль для надписи (label) */
+.form-group label {
+    display: block; /* Делает надпись блочным элементом, чтобы она находилась над полем ввода */
+    margin-bottom: 5px; /* Добавляет небольшой отступ между надписью и полем ввода */
+    color: black; /* Устанавливает черный цвет текста */
+}
+
+/* Стиль для поля ввода (input) */
+.form-group input {
+    border-radius: 8px; /* Делает поле ввода закругленным */
+    border: 1px solid black; /* Устанавливает черную границу для поля ввода */
+    padding: 5px; /* Добавляет немного внутреннего отступа для поля ввода */
+    color: black; /* Устанавливает черный цвет текста в поле ввода */
+}
+
+
+
+.registration-btn:hover {
+    background-color: #3333A0; /* Цвет фона при наведении */
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-input-wrapper {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666666;
+    padding: 0;
+}

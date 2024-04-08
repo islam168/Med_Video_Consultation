@@ -198,7 +198,7 @@ celerybeat-schedule
 
 # virtualenv
 .venv
-venv/
+Backend/venv/
 ENV/
 
 # Spyder project settings
@@ -211,14 +211,14 @@ ENV/
 # mkdocs documentation
 /site
 
-apps/users/migrations
+Backend/apps/users/migrations
 
 # envs
-envs/.env_local.ps1
-envs/.env_local
+Backend/envs/.env_local.ps1
+Backend/envs/.env_local
 
 # pytest_cache
 .pytest_cache
 
 # static
-static/
+Backend/static/
