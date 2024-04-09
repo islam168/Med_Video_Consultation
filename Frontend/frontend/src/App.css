@@ -1,3 +1,12 @@
+/* Import the desired font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+
+/* Apply the font to the entire application */
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+/* Other styles remain unchanged */
 .App {
   text-align: center;
 }

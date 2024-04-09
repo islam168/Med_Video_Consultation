@@ -92,9 +92,9 @@ class DoctorCard(models.Model):
         on_delete=models.CASCADE,
         db_column='doctor_id',  # явное указание имени поля внешнего ключа в БД
     )
-    qualification = models.CharField(verbose_name='Квалификация', max_length=500)
-    education = models.TextField(verbose_name='Образование', max_length=500)
-    advanced_training = models.TextField(verbose_name='Повышение квалификации', blank=True, null=True, max_length=500)
+    qualification = models.TextField(verbose_name='Квалификация', max_length=800)
+    education = models.TextField(verbose_name='Образование', max_length=800)
+    advanced_training = models.TextField(verbose_name='Повышение квалификации', blank=True, null=True, max_length=800)
     doctor_photo = models.ImageField(verbose_name='Фото доктора', upload_to=upload_image, null=True, blank=False)
 
     class Meta:

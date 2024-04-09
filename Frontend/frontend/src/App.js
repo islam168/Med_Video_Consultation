@@ -1,4 +1,3 @@
-// import logo from './logo.svg';
 import "./App.css";
 import React from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
@@ -6,7 +5,6 @@ import Register from "./pages/RegistrationForm";
 import Login from "./pages/Login";
 import CreateDoctorInfoCard from "./pages/CreateDoctorInfoCard";
 import UpdateDoctorForm from "./pages/UpdateDoctorForm";
-import Doctor from "./pages/DoctorProfile";
 import DoctorProfile from "./pages/DoctorProfile";
 
 

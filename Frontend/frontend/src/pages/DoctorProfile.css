@@ -1,5 +1,6 @@
+
 .doctor-profile {
-    max-width: 600px;
+    max-width: 45%;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -7,33 +8,58 @@
     background-color: #f9f9f9;
 }
 
+.profile-header {
+    display: flex;
+    align-items: center;
+}
+
+.doctor-photo {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.profile-info {
+    flex-grow: 1;
+}
+
 .doctor-profile h1 {
     font-size: 24px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
+    margin-top: -50px;
 }
 
-.doctor-profile p {
+.doctor-profile h6 {
+    font-size: 16px;
+    margin-left: 5px;
+    margin-bottom: 8px;
+}
+
+.work-experience {
     font-size: 16px;
     margin-bottom: 5px;
+    margin-top: 5px;
 }
 
-.doctor-profile .doctor-card {
+.doctor-card {
     margin-top: 20px;
 }
 
-.doctor-profile .doctor-card h2 {
+.doctor-card h2 {
     font-size: 20px;
     margin-bottom: 10px;
+    margin-left: 10px;
 }
-
-.doctor-profile .doctor-card p {
+.doctor-card h6 {
     font-size: 16px;
     margin-bottom: 5px;
+    margin-left: 15px;
 }
 
-.doctor-profile .doctor-card img {
-    max-width: 100%;
-    height: auto;
-    margin-top: 10px;
-    border-radius: 8px;
+.doctor-card p {
+    font-size: 16px;
+    margin-bottom: 5px;
+    margin-left: 22px;
+    margin-right: 12px;
 }

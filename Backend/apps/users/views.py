@@ -28,6 +28,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny,]
 
 
+# Создание информационной карточки доктора
 class DoctorCreateCardAPIView(generics.ListCreateAPIView):
     queryset = DoctorCard.objects.all()
     serializer_class = DoctorCardSerializer
@@ -42,6 +43,7 @@ class DoctorCreateCardAPIView(generics.ListCreateAPIView):
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Обновление информационной карточки доктора
 class DoctorCardAPIView(generics.RetrieveUpdateAPIView):
     queryset = DoctorCard.objects.all()
     serializer_class = DoctorCardSerializer
@@ -49,6 +51,7 @@ class DoctorCardAPIView(generics.RetrieveUpdateAPIView):
     lookup_field = 'id'
 
 
+# Страница доктора
 class DoctorPageAPIView(generics.RetrieveAPIView):
     queryset = Doctor.objects.all()
     serializer_class = DoctorPageSerializer

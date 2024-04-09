@@ -1,11 +1,10 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from apps.users.services.services_serializers import DoctorCardServ
+from apps.users.services.services_serializers import DoctorCardServiceSerializers
 from apps.users.models import Patient, Doctor, DoctorCard
 
 
 class PatientCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Patient
         fields = ('first_name', 'last_name', 'middle_name', 'email', 'birthdate', 'password')
@@ -29,28 +28,27 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class DoctorCardSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = DoctorCard
         fields = ['id', 'doctor_id', 'qualification', 'education', 'advanced_training', 'doctor_photo']
 
 
-class DoctorSerializer(serializers.ModelSerializer):
+class DoctorInfoCardSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Doctor
-        fields = ['id', 'last_name', 'first_name', 'middle_name']
+        model = DoctorCard
+        fields = ['qualification', 'education', 'advanced_training', 'doctor_photo']
 
 
 class DoctorPageSerializer(serializers.ModelSerializer):
-    card = serializers.SerializerMethodField()
+    doctor_card = DoctorInfoCardSerializer(read_only=True)
     qualification = serializers.CharField(source='qualification.name', read_only=True)
+    work_experience = serializers.SerializerMethodField()
 
     class Meta:
         model = Doctor
-        fields = ['id', 'last_name', 'first_name', 'middle_name', 'qualification', 'card']
+        fields = ['id', 'last_name', 'first_name', 'middle_name', 'qualification', 'work_experience', 'doctor_card']
 
-    def get_card(self, obj):
-        # Получение данных из информационной карточки доктора
+    def get_work_experience(self, obj):
         data = {'doctor_id': obj.id}
-        dop_info = DoctorCardServ.doctor_work_experience(data)
+        dop_info = DoctorCardServiceSerializers.doctor_work_experience(data)
         return dop_info
