@@ -1,5 +1,3 @@
-from datetime import date
-
 from apps.users.models import Patient, Doctor, DoctorCard
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer
 
@@ -39,19 +37,3 @@ class DoctorCardService:
         else:
             return False, serializer.errors
 
-    @staticmethod
-    def doctor_work_experience(data):
-        doctor_id = data.get('doctor_id')
-        doctor = Doctor.objects.get(id=doctor_id)
-        qualification = doctor.qualification
-        doctor_start_of_activity = doctor.start_of_activity
-        today = date.today()
-        doctor_work_experience = (today.year - doctor_start_of_activity.year) - (
-                (today.month, today.day) < (doctor_start_of_activity.month, doctor_start_of_activity.day))
-
-        information_about_doctor = {
-            'doctor_work_experience': doctor_work_experience,
-            'qualification': qualification,
-        }
-        print('Стаж работы', information_about_doctor)
-        return information_about_doctor

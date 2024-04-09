@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './RegistrationForm.css'; // Подключение CSS-файла для дополнительных стилей
+import './RegistrationForm.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
@@ -55,7 +55,7 @@ const Login = () => {
             const token = response.data.access;
 
             // Store the token in localStorage
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', `Bearer ${token}`);
 
             // Redirect to successful login page
             navigate('/successful_login');

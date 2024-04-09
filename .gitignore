@@ -222,3 +222,6 @@ Backend/envs/.env_local
 
 # static
 Backend/static/
+
+# media
+Backend/media/

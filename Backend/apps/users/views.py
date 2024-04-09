@@ -1,12 +1,12 @@
 from rest_framework import generics
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from apps.users.models import Patient, DoctorCard
-from apps.users.serializers import PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer
-from apps.users.services import RegistrationService, DoctorCardService
+from apps.users.models import Patient, DoctorCard, Doctor
+from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
+                                    DoctorPageSerializer)
+from apps.users.services.services_views import RegistrationService, DoctorCardService
 from core.permissions import IsDoctor, IsDoctorData
 
 
@@ -38,6 +38,7 @@ class DoctorCreateCardAPIView(generics.ListCreateAPIView):
         if success:
             return Response(message, status=status.HTTP_201_CREATED)
         else:
+            print(message)
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -45,6 +46,13 @@ class DoctorCardAPIView(generics.RetrieveUpdateAPIView):
     queryset = DoctorCard.objects.all()
     serializer_class = DoctorCardSerializer
     permission_classes = [IsDoctorData,]
+    lookup_field = 'id'
+
+
+class DoctorPageAPIView(generics.RetrieveAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorPageSerializer
+    permission_classes = [AllowAny]
     lookup_field = 'id'
 
 

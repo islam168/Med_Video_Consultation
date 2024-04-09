@@ -4,8 +4,10 @@ import React from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Register from "./pages/RegistrationForm";
 import Login from "./pages/Login";
-// import Home from "./pages/Home";
-// import Goals from "./pages/Goals";
+import CreateDoctorInfoCard from "./pages/CreateDoctorInfoCard";
+import UpdateDoctorForm from "./pages/UpdateDoctorForm";
+import Doctor from "./pages/DoctorProfile";
+import DoctorProfile from "./pages/DoctorProfile";
 
 
 function App() {
@@ -14,8 +16,9 @@ function App() {
             <Routes>
             {/*  <Route path="/home" element={<Home />} />*/}
               <Route path="/registration/" element={<Register />} />
-            {/*  <Route path="/goals" element={<Goals />} />*/}
-            {/*  <Route path="/successful_registration" element={<SuccessfulRegistration />} />*/}
+              <Route path="/create_doctor_info_card/" element={<CreateDoctorInfoCard />} />
+              <Route path="/update_doctor_card/:id/" element={<UpdateDoctorForm />} />
+              <Route path="/doctor/:id/" element={<DoctorProfile/>} />
               <Route path="/login/" element={<Login />} />
             </Routes>
         </BrowserRouter>

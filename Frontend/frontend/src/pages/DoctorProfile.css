@@ -1,0 +1,39 @@
+.doctor-profile {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.doctor-profile h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.doctor-profile p {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.doctor-profile .doctor-card {
+    margin-top: 20px;
+}
+
+.doctor-profile .doctor-card h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.doctor-profile .doctor-card p {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.doctor-profile .doctor-card img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+}

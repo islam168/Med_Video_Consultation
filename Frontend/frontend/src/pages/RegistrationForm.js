@@ -163,7 +163,7 @@ const Registration = () => {
                             {errorMessage && <p className="mt-3 text-danger text-blue">{errorMessage}</p>}
                             <div className="login-btn">
                                 Уже есть аккаунт? Тогда войдите
-                                {/*<Link to="/login" className="text-button">Уже есть аккаунт? Тогда войдите</Link>*/}
+                                <Link to="/login/" className="text-button">Уже есть аккаунт? Тогда войдите</Link>
                             </div>
                         </form>
                     </div>

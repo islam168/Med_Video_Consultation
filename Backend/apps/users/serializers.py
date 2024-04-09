@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from apps.users.services.services_serializers import DoctorCardServ
 from apps.users.models import Patient, Doctor, DoctorCard
 
 
@@ -17,13 +18,6 @@ class PatientCreateSerializer(serializers.ModelSerializer):
         return user
 
 
-class DoctorSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Doctor
-        fields = ('id', 'last_name', 'first_name', 'middle_name')
-
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -38,4 +32,25 @@ class DoctorCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DoctorCard
-        fields = ['id', 'doctor_id', 'qualification', 'education', 'advanced_training']
+        fields = ['id', 'doctor_id', 'qualification', 'education', 'advanced_training', 'doctor_photo']
+
+
+class DoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ['id', 'last_name', 'first_name', 'middle_name']
+
+
+class DoctorPageSerializer(serializers.ModelSerializer):
+    card = serializers.SerializerMethodField()
+    qualification = serializers.CharField(source='qualification.name', read_only=True)
+
+    class Meta:
+        model = Doctor
+        fields = ['id', 'last_name', 'first_name', 'middle_name', 'qualification', 'card']
+
+    def get_card(self, obj):
+        # Получение данных из информационной карточки доктора
+        data = {'doctor_id': obj.id}
+        dop_info = DoctorCardServ.doctor_work_experience(data)
+        return dop_info

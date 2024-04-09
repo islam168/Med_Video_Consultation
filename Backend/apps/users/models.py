@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from apps.users.managers import UserManager
+from apps.users.utils import upload_image
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -91,9 +92,10 @@ class DoctorCard(models.Model):
         on_delete=models.CASCADE,
         db_column='doctor_id',  # явное указание имени поля внешнего ключа в БД
     )
-    qualification = models.TextField(verbose_name='Квалификация')
-    education = models.TextField(verbose_name='Образование')
-    advanced_training = models.TextField(verbose_name='Повышение квалификации', blank=True, null=True)
+    qualification = models.CharField(verbose_name='Квалификация', max_length=500)
+    education = models.TextField(verbose_name='Образование', max_length=500)
+    advanced_training = models.TextField(verbose_name='Повышение квалификации', blank=True, null=True, max_length=500)
+    doctor_photo = models.ImageField(verbose_name='Фото доктора', upload_to=upload_image, null=True, blank=False)
 
     class Meta:
         verbose_name = 'Информационная карточка доктора'
