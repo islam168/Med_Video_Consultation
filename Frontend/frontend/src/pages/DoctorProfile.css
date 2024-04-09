@@ -1,6 +1,5 @@
-
 .doctor-profile {
-    max-width: 45%;
+    max-width: 50%;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -16,6 +15,7 @@
 .doctor-photo {
     width: 220px;
     height: 220px;
+    margin-top: -10px;
     border-radius: 50%;
     margin-right: 20px;
 }
@@ -24,13 +24,17 @@
     flex-grow: 1;
 }
 
-.doctor-profile h1 {
+.profile{
+    padding: 16px;
+}
+
+.profile-info h1 {
     font-size: 24px;
     margin-bottom: 30px;
     margin-top: -50px;
 }
 
-.doctor-profile h6 {
+.profile-info h6 {
     font-size: 16px;
     margin-left: 5px;
     margin-bottom: 8px;

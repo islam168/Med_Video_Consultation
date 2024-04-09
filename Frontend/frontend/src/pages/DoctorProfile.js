@@ -25,26 +25,29 @@ const DoctorProfile = () => {
 
     return (
         <div className="doctor-profile">
-            <div className="profile-header">
-                <img src={`${doctorData.doctor_card.doctor_photo}`} alt={`${doctorData.first_name} ${doctorData.last_name}`} className="doctor-photo" />
-                <div className="profile-info">
-                    <h1>{`${doctorData.last_name} ${doctorData.first_name}${doctorData.middle_name ? ' ' + doctorData.middle_name : ''}`}</h1>
-                    <h6>{doctorData.qualification}</h6>
-                    <h6 className="work-experience">Стаж работы: {doctorData.work_experience}</h6>
+            <div className="profile">
+                <div className="profile-header">
+                    <img src={`${doctorData.doctor_card.doctor_photo}`} alt={`${doctorData.first_name} ${doctorData.last_name}`} className="doctor-photo" />
+                    <div className="profile-info">
+                        <h1>{`${doctorData.last_name} ${doctorData.first_name}${doctorData.middle_name ? ' ' + doctorData.middle_name : ''}`}</h1>
+                        <h6>{doctorData.qualification}</h6>
+                        <h6 className="work-experience">Стаж работы: {doctorData.work_experience}</h6>
+                        <h6 className="docot-rating">Ретинг: 4.5</h6>
+                    </div>
                 </div>
-            </div>
-            <div className="doctor-card">
-                <h2>Квалификация и образование</h2>
-                <h6>Квалификация</h6>
-                <p>{doctorData.doctor_card.qualification}</p>
-                <h6>Образование</h6>
-                <p>{doctorData.doctor_card.education}</p>
-                {doctorData.doctor_card.advanced_training && (
-                    <>
-                        <h6>Повышение квалификации</h6>
-                        <p>{doctorData.doctor_card.advanced_training}</p>
-                    </>
-                )}
+                <div className="doctor-card">
+                    <h2>Квалификация и образование</h2>
+                    <h6>Квалификация</h6>
+                    <p>{doctorData.doctor_card.qualification}</p>
+                    <h6>Образование</h6>
+                    <p>{doctorData.doctor_card.education}</p>
+                    {doctorData.doctor_card.advanced_training && (
+                        <>
+                            <h6>Повышение квалификации</h6>
+                            <p>{doctorData.doctor_card.advanced_training}</p>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );
