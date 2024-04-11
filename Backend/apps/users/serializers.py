@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apps.users.services.services_serializers import DoctorCardServiceSerializers
-from apps.users.models import Patient, Doctor, DoctorCard
+from apps.users.models import Patient, Doctor, DoctorCard, Qualification, Problem
 
 
 class PatientCreateSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class DoctorCardSerializer(serializers.ModelSerializer):
 class DoctorInfoCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorCard
-        fields = ['qualification', 'education', 'advanced_training', 'doctor_photo']
+        fields = ['qualification', 'education', 'advanced_training']
 
 
 class DoctorPageSerializer(serializers.ModelSerializer):
@@ -46,9 +46,35 @@ class DoctorPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctor
-        fields = ['id', 'last_name', 'first_name', 'middle_name', 'qualification', 'work_experience', 'doctor_card']
+        fields = ['id', 'last_name', 'first_name', 'middle_name', 'qualification', 'work_experience',
+                  'doctor_photo', 'doctor_card']
 
     def get_work_experience(self, obj):
-        data = {'doctor_id': obj.id}
-        dop_info = DoctorCardServiceSerializers.doctor_work_experience(data)
+        dop_info = DoctorCardServiceSerializers.doctor_work_experience(obj.id)
         return dop_info
+
+
+class DoctorSerializer(serializers.ModelSerializer):
+    work_experience = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Doctor
+        fields = ['id', 'last_name', 'first_name', 'middle_name', 'work_experience', 'doctor_photo']
+
+    def get_work_experience(self, obj):
+        dop_info = DoctorCardServiceSerializers.doctor_work_experience(obj.id)
+        return dop_info
+
+
+class QualificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Qualification
+        fields = ['name', 'slug', 'image']
+
+
+class ProblemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Problem
+        fields = ['name', 'slug', 'image']

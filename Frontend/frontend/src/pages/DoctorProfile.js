@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './DoctorProfile.css'; // Import CSS file for styles
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
+
 
 const DoctorProfile = () => {
     const [doctorData, setDoctorData] = useState(null);
@@ -27,12 +30,12 @@ const DoctorProfile = () => {
         <div className="doctor-profile">
             <div className="profile">
                 <div className="profile-header">
-                    <img src={`${doctorData.doctor_card.doctor_photo}`} alt={`${doctorData.first_name} ${doctorData.last_name}`} className="doctor-photo" />
+                    <img src={`${doctorData.doctor_photo}`} alt={`${doctorData.first_name} ${doctorData.last_name}`} className="doctor-photo" />
                     <div className="profile-info">
                         <h1>{`${doctorData.last_name} ${doctorData.first_name}${doctorData.middle_name ? ' ' + doctorData.middle_name : ''}`}</h1>
                         <h6>{doctorData.qualification}</h6>
                         <h6 className="work-experience">Стаж работы: {doctorData.work_experience}</h6>
-                        <h6 className="docot-rating">Ретинг: 4.5</h6>
+                        <h6 className="docot-rating">Рейтинг: 4.5 {doctorData.rating} <FontAwesomeIcon icon={faHeart} style={{ color: 'red' }} /></h6>
                     </div>
                 </div>
                 <div className="doctor-card">

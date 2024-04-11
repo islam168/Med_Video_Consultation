@@ -1,0 +1,75 @@
+.home-page {
+    text-align: center;
+    padding: 20px;
+    max-width: 1200px; /* Reduce page size */
+    margin: 0 auto; /* Center the page */
+}
+
+.home-page h1, .home-page h2 {
+    color: #007bff;
+}
+
+.home-page .home-card {
+    margin: 20px; /* Add space between blocks */
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.home-page .home-photo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.home-page button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.home-page button:hover {
+    background-color: #0056b3;
+}
+
+.home-page .home-slider {
+    margin: 0 -20px 40px; /* Add space between slider and qualifications */
+}
+
+.home-page .slick-prev,
+.home-page .slick-next {
+    color: #007bff;
+    font-size: 24px;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.5); /* Arrow background */
+    padding: 15px; /* Padding around arrows */
+    border-radius: 50%; /* Rounded arrows */
+}
+
+.home-page .slick-prev {
+    left: -60px; /* Adjust arrow position */
+}
+
+.home-page .slick-next {
+    right: -60px; /* Adjust arrow position */
+}
+
+.home-page .slick-prev:before,
+.home-page .slick-next:before {
+    content: ''; /* Remove arrow lettering */
+}
+
+.home-page .slick-prev:hover,
+.home-page .slick-next:hover {
+    color: #0056b3;
+}

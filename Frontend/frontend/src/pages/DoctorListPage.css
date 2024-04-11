@@ -1,0 +1,92 @@
+/* DoctorListPage.css */
+
+:root {
+    --primary-color: #007bff; /* Blue */
+    --secondary-color: #0fa42e; /* Green */
+    --text-color: #333; /* Dark gray */
+}
+
+.doctor-list-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.doctor-list-page h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.doctor-list-page h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.doctor-list-page h3 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #007bff;
+}
+
+.doctor-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 2rem;
+}
+
+.doctor-list-card {
+    display: flex;
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.doctor-list-card:hover {
+    transform: translateY(-5px);
+}
+
+.doctor-photo-container {
+    flex: 0 0 30%;
+    padding: 1rem;
+}
+
+.doctor-photo-list {
+    width: 100px; /* Set a fixed width */
+    height: 100px; /* Set a fixed height */
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.doctor-list-info {
+    flex: 1;
+    padding: 1rem;
+    margin-top: 10px;
+}
+
+.work-experience {
+    color: var(--text-color);
+    margin-top: 0.5rem;
+}
+
+.qualification-list-name {
+    font-size: 2rem;
+    color: var(--primary-color); /* Set the color */
+    margin-bottom: 0.5rem; /* Adjust spacing */
+    text-align: center;
+    border-bottom: 1px solid var(--primary-color); /* Add a line under the name */
+    padding-bottom: 0.5rem; /* Add some space between the name and the line */
+
+}
+
+@media (max-width: 768px) {
+    .doctor-list {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}

@@ -10,7 +10,7 @@ class DoctorCardServiceSerializers:
         '''
         Returns the doctor's work experience in the required format
         '''
-        doctor_id = data.get('doctor_id')
+        doctor_id = data
 
         try:
             doctor = Doctor.objects.get(id=doctor_id)
@@ -26,12 +26,11 @@ class DoctorCardServiceSerializers:
             doctor_work_experience_years -= 1  # Subtract a year if we haven't reached the anniversary yet
 
         if (doctor_work_experience_years % 10) == 0:
-            result = f'{doctor_work_experience_years} лет'
+            return f'{doctor_work_experience_years} лет'
         elif (doctor_work_experience_years % 10) == 1:
-            result = f'{doctor_work_experience_years} год'
+            return f'{doctor_work_experience_years} год'
         elif 1 < (doctor_work_experience_years % 10) < 5:
-            result = f'{doctor_work_experience_years} года'
+            return f'{doctor_work_experience_years} года'
         else:
-            result = f'{doctor_work_experience_years} лет'
-
-        return result
+            return f'{doctor_work_experience_years} лет'
+        

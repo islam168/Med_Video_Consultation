@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from apps.users.managers import UserManager
@@ -50,6 +51,8 @@ class Patient(User):
 
 class Qualification(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name='Название')
+    image = models.ImageField(verbose_name='Изображение', upload_to=upload_image, blank=False, null=True)
+    slug = models.SlugField(unique=True, blank=False, null=False, default=None)
 
     class Meta:
         verbose_name = 'Квалификация'
@@ -59,15 +62,37 @@ class Qualification(models.Model):
         return self.name
 
 
+# Болезни, трудности и т.д. с которыми пациент пришел на консультацию.
+class Problem(models.Model):
+    name = models.CharField(verbose_name='Проблема пациента', max_length=50, unique=True)
+    image = models.ImageField(verbose_name='Изображение', upload_to=upload_image, default=None)
+    qualification = models.ForeignKey(
+        verbose_name='Квалификация специалиста по данной проблеме',
+        to='Qualification',
+        related_name='problems',
+        on_delete=models.PROTECT
+    )
+    slug = models.SlugField(unique=True, blank=False, null=False, default=None)
+
+    class Meta:
+        verbose_name = 'Проблема пациента'
+        verbose_name_plural = 'Проблемы пациентов'
+
+    def __str__(self):
+        return self.name
+
+
 class Doctor(User):
     qualification = models.ForeignKey(
         to='Qualification',
         related_name='doctor_qualification',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
+        #  Это означает, что при попытке удалить родительскую запись будет возбуждено исключение ProtectedError.
         blank=False,
         verbose_name='Квалификация',
     )
     birthdate = models.DateField(verbose_name='День рождение')
+    doctor_photo = models.ImageField(verbose_name='Фото доктора', upload_to=upload_image, blank=False, null=True)
     start_of_activity = models.DateField(
         verbose_name='Время начала профессиональной деятельности',
         blank=False,
@@ -90,12 +115,11 @@ class DoctorCard(models.Model):
         to='Doctor',
         related_name='doctor_card',
         on_delete=models.CASCADE,
-        db_column='doctor_id',  # явное указание имени поля внешнего ключа в БД
+        db_column='doctor_id',  # Явное указание имени поля внешнего ключа в БД.
     )
     qualification = models.TextField(verbose_name='Квалификация', max_length=800)
     education = models.TextField(verbose_name='Образование', max_length=800)
     advanced_training = models.TextField(verbose_name='Повышение квалификации', blank=True, null=True, max_length=800)
-    doctor_photo = models.ImageField(verbose_name='Фото доктора', upload_to=upload_image, null=True, blank=False)
 
     class Meta:
         verbose_name = 'Информационная карточка доктора'
@@ -103,3 +127,44 @@ class DoctorCard(models.Model):
 
     def __str__(self):
         return f"Информационная карта: ID:{self.id}, Доктор:{self.doctor_id}"
+
+
+class Evaluation(models.Model):
+    doctor = models.ForeignKey(
+        verbose_name='Доктор',
+        to='Doctor',
+        related_name='evaluations',
+        on_delete=models.CASCADE,
+    )
+    patient = models.ForeignKey(
+        verbose_name='Пользователь',
+        to='Patient',
+        related_name='evaluations',
+        on_delete=models.CASCADE,
+    )
+    rate = models.PositiveIntegerField(
+        verbose_name='Оценка',
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
+    review = models.CharField(
+        verbose_name='Отзыв',
+        max_length=150,
+        blank=True,
+        null=True,
+    )
+    # Статус видимости оценки другим пользователям, исключение администратор,
+    # он может просматривать все оценки для анализа работы докторов.
+    published = models.BooleanField(
+        verbose_name='Оценка видна другим',
+        default=False,
+    )
+
+    class Meta:
+        # Обеспечивают уникальность, когда пациент оценивает доктора,
+        # чтобы он не мог поставить оценку и оставить отзыв одному доктору больше 1 раза.
+        unique_together = ('doctor', 'patient')
+        verbose_name = 'Оценка доктора'
+        verbose_name_plural = 'Оценки доктора'
+
+    def __str__(self):
+        return self.rate

@@ -80,7 +80,7 @@ const DoctorForm = () => {
         <div className="doctor-form">
             <form onSubmit={handleSubmit} className="create-doctor-card">
                 <label className="doctor-card-field">
-                    Квалификаия:
+                    Квалификация:
                     <input
                         type="text"
                         value={qualification}

@@ -1,16 +1,18 @@
-from rest_framework import generics
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
-from apps.users.models import Patient, DoctorCard, Doctor
+from apps.users.filters import DoctorFilter
+from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
-                                    DoctorPageSerializer)
+                                    DoctorPageSerializer, DoctorSerializer, QualificationSerializer, ProblemSerializer)
 from apps.users.services.services_views import RegistrationService, DoctorCardService
 from core.permissions import IsDoctor, IsDoctorData
+from django_filters import rest_framework as filters
 
 
-class RegistrationAPIView(generics.CreateAPIView):
+class RegistrationAPIView(CreateAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientCreateSerializer
     permission_classes = [AllowAny,]
@@ -29,7 +31,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 # Создание информационной карточки доктора
-class DoctorCreateCardAPIView(generics.ListCreateAPIView):
+class DoctorCreateCardAPIView(CreateAPIView):
     queryset = DoctorCard.objects.all()
     serializer_class = DoctorCardSerializer
     permission_classes = [IsDoctor,]
@@ -44,7 +46,7 @@ class DoctorCreateCardAPIView(generics.ListCreateAPIView):
 
 
 # Обновление информационной карточки доктора
-class DoctorCardAPIView(generics.RetrieveUpdateAPIView):
+class DoctorCardAPIView(RetrieveUpdateAPIView):
     queryset = DoctorCard.objects.all()
     serializer_class = DoctorCardSerializer
     permission_classes = [IsDoctorData,]
@@ -52,12 +54,49 @@ class DoctorCardAPIView(generics.RetrieveUpdateAPIView):
 
 
 # Страница доктора
-class DoctorPageAPIView(generics.RetrieveAPIView):
+class DoctorPageAPIView(RetrieveAPIView):
     queryset = Doctor.objects.all()
     serializer_class = DoctorPageSerializer
     permission_classes = [AllowAny]
     lookup_field = 'id'
 
+
+class DoctorListAPIView(ListAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = DoctorFilter
+
+
+# Страница "Специалисты"
+class QualificationListAPIView(ListAPIView):
+    queryset = Qualification.objects.all()
+    serializer_class = QualificationSerializer
+    permission_classes = [AllowAny,]
+
+
+class HomePageAPIView(ListAPIView):
+    serializer_class_problem = ProblemSerializer
+    serializer_class_qualification = QualificationSerializer
+    permission_classes = [AllowAny, ]
+
+    def get_queryset_problem(self):
+        return Problem.objects.all()
+
+    def get_queryset_qualification(self):
+        return Qualification.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        problem = self.get_queryset_problem()
+        qualification = self.get_queryset_qualification()
+        problem_serializer = self.serializer_class_problem(problem, many=True)
+        qualification_serializer = self.serializer_class_qualification(qualification, many=True)
+        return Response(
+            {
+                "Problems": problem_serializer.data,
+                "Qualification": qualification_serializer.data,
+            }
+        )
 
 # class LogoutView(APIView):
 #     permission_classes = [IsAuthenticated]
