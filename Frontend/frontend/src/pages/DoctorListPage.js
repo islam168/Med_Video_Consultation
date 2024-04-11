@@ -20,33 +20,20 @@ const DoctorListPage = () => {
     const [qualificationName, setQualificationName] = useState('');
 
     useEffect(() => {
-        const fetchQualificationData = async () => {
-            try {
-                const searchParams = new URLSearchParams(window.location.search);
-                const slug = searchParams.get('qualification');
-                const response = await fetch(`http://127.0.0.1:8000/api/users/qualifications/?slug=${slug}`);
-                const data = await response.json();
-                if (data.length > 0) {
-                    setQualificationName(data[0].name);
-                }
-            } catch (error) {
-                console.error('Error fetching qualification:', error);
-            }
-        };
-
         const fetchDoctorsData = async () => {
             try {
                 const searchParams = new URLSearchParams(window.location.search);
                 const slug = searchParams.get('qualification');
+                const qualificationName = searchParams.get('qualificationName'); // Extract qualification name from URL
                 const response = await fetch(`http://127.0.0.1:8000/api/users/doctors/?qualification=${slug}`);
                 const data = await response.json();
                 setDoctors(data);
+                setQualificationName(qualificationName); // Set the qualification name
             } catch (error) {
                 console.error('Error fetching doctors:', error);
             }
         };
 
-        fetchQualificationData();
         fetchDoctorsData();
     }, []);
 
@@ -56,7 +43,6 @@ const DoctorListPage = () => {
 
     return (
         <div className="doctor-list-page">
-            {/*<h1>Доктора</h1>*/}
             <h1 className="qualification-list-name">{qualificationName}</h1>
             <div className="doctor-list">
                 {doctors.map(doctor => (

@@ -1,11 +1,5 @@
 /* QualificationPage.css */
 
-/* Colors */
-:root {
-    --primary-color: #007bff; /* Blue */
-    --secondary-color: #0fa42e; /* Green */
-}
-
 .qualification-page {
     max-width: 1200px;
     margin: 0 auto;
@@ -64,5 +58,5 @@
 }
 
 .qualification-card button:hover {
-    background-color: rgb(33, 134, 68); /* Darker shade of green */
+    background-color: #004d49; /* Darker shade of green */
 }

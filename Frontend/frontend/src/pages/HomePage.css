@@ -1,75 +1,148 @@
+/* HomePage.css */
 .home-page {
+    color: #ffffff;
+    margin: 0 auto; /* Center align */
+}
+
+.home-header {
+    background-color: #068466;
+    padding: 20px;
     text-align: center;
-    padding: 20px;
-    max-width: 1200px; /* Reduce page size */
-    margin: 0 auto; /* Center the page */
 }
 
-.home-page h1, .home-page h2 {
-    color: #007bff;
+.home-section {
+    max-width: 1300px;
+    margin: 0 auto; /* Center align */
 }
 
-.home-page .home-card {
-    margin: 20px; /* Add space between blocks */
-    padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.home-section h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333; /* darker text color */
 }
 
-.home-page .home-photo {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 10px;
+.home-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 2rem;
+    justify-content: center; /* Center align items */
 }
 
-.home-page button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.home-card {
+    width: 100%; /* Adjust width to fit grid */
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #004d49; /* lighter background color */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer; /* Change cursor to pointer */
 }
 
-.home-page button:hover {
-    background-color: #0056b3;
+.home-card:hover {
+    transform: translateY(-8px); /* slightly smaller hover effect */
 }
 
-.home-page .home-slider {
-    margin: 0 -20px 40px; /* Add space between slider and qualifications */
+.home-card img {
+    width: 100%;
+    height: 200px; /* Set a fixed height for all images */
+    object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
 }
 
-.home-page .slick-prev,
-.home-page .slick-next {
-    color: #007bff;
-    font-size: 24px;
-    line-height: 1;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.5); /* Arrow background */
-    padding: 15px; /* Padding around arrows */
-    border-radius: 50%; /* Rounded arrows */
+.home-card p {
+    margin-top: 10px;
+    text-align: center;
+    color: #ffffff;
+}
+.home-card:hover p {
+    color: #83fcf7;
 }
 
-.home-page .slick-prev {
-    left: -60px; /* Adjust arrow position */
+.home-problem-section {
+    max-width: 1300px;
+    margin: 0 auto; /* Center align */
+
 }
 
-.home-page .slick-next {
-    right: -60px; /* Adjust arrow position */
+.home-problem-section h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333; /* darker text color */
 }
 
-.home-page .slick-prev:before,
-.home-page .slick-next:before {
-    content: ''; /* Remove arrow lettering */
+
+.home-problem-card {
+    margin-top: 10px;
+    margin-bottom: 80px;
+    width: 400px; /* Adjust width to fit grid */
+    background-color: #004d49; /* lighter background color */
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer; /* Change cursor to pointer */
+    margin-left: 15px;
+    justify-content: center; /* Center horizontally */
 }
 
-.home-page .slick-prev:hover,
-.home-page .slick-next:hover {
-    color: #0056b3;
+.home-problem-card:hover {
+    transform: translateY(-3px); /* slightly smaller hover effect */
+}
+
+.home-problem-card img {
+    width: 100%;
+    height: 200px; /* Set a fixed height for all images */
+    object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.home-problem-card p {
+    margin-top: 10px;
+    text-align: center;
+    color: #ffffff; /* darker text color */
+}
+
+.home-problem-card:hover p {
+    color: #83fcf7; /* darker text color */
+}
+
+.carousel .control-dots .dot {
+    background-color: #068466; /* Change to your desired color */
+}
+
+.carousel .control-dots .dot.selected {
+    background-color: #004d49; /* Change to your desired color */
+}
+
+
+/* Center the forward and back buttons of the carousel */
+.carousel .control-prev.control-arrow,
+.carousel .control-next.control-arrow {
+    top: 90%; /* Position the buttons vertically at the center */
+    transform: translateY(-50%); /* Adjust the vertical position */
+    background-color: #004d49 !important; /* Set the color of the arrows */
+    border-radius: 50%; /* Make the arrows round */
+    height: 60px;
+    width: 60px;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+/* Optionally, you can adjust the size of the arrows */
+.carousel .control-prev.control-arrow:before,
+.carousel .control-next.control-arrow:before {
+    font-size: 24px; /* Adjust the size of the arrows */
+    color: #ffffff; /* Set the color of the arrows */
+}
+
+/* Optionally, you can add hover effects to the arrows */
+.carousel .control-prev.control-arrow:hover,
+.carousel .control-next.control-arrow:hover {
+    background-color: #00595b !important; /* Change background color on hover */
 }

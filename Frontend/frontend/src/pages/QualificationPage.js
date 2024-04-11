@@ -22,15 +22,17 @@ const QualificationPage = () => {
             .catch(error => console.error('Error fetching qualifications:', error));
     }, []);
 
-    const handleCardClick = slug => {
-        fetch(`http://127.0.0.1:8000/api/users/doctors/?qualification=${slug}`)
+    const handleCardClick = qualification => {
+        fetch(`http://127.0.0.1:8000/api/users/doctors/?qualification=${qualification.slug}`)
             .then(response => response.json())
             .then(data => {
-                setDoctors(data); // Обновление списка докторов
-                window.location.href = `/doctors/?qualification=${slug}`;
+                setDoctors(data); // Update the list of doctors
+                window.location.href = `/doctors/?qualification=${qualification.slug}&qualificationName=${qualification.name}`;
             })
             .catch(error => console.error('Error fetching doctors with qualification:', error));
     };
+
+
 
     return (
         <div className="qualification-page">
@@ -40,7 +42,7 @@ const QualificationPage = () => {
                     <QualificationCard
                         key={qualification.slug}
                         qualification={qualification}
-                        onClick={handleCardClick}
+                        onClick={() => handleCardClick(qualification)}
                     />
                 ))}
             </div>

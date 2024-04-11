@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import './HomePage.css'; // Import your custom CSS file
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import './HomePage.css';
 
 function HomePage() {
     const [problems, setProblems] = useState([]);
     const [qualifications, setQualifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [doctors, setDoctors] = useState([]);
 
     useEffect(() => {
         fetch('http://127.0.0.1:8000/api/users/')
@@ -29,69 +29,54 @@ function HomePage() {
             });
     }, []);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-
-    const slickSettings = {
-        dots: true,
-        infinite: false,
-        speed: 500,
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        initialSlide: 0,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3,
-                    infinite: true,
-                    dots: true
-                }
-            },
-            {
-                breakpoint: 600,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2,
-                    initialSlide: 2
-                }
-            },
-            {
-                breakpoint: 480,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1
-                }
-            }
-        ]
+    const handleCardClick = (item) => {
+        if (item.slug) {
+            fetch(`http://127.0.0.1:8000/api/users/doctors/?qualification=${item.slug}`)
+                .then(response => response.json())
+                .then(data => {
+                    setDoctors(data);
+                    window.location.href = `/doctors/?qualification=${item.slug}&qualificationName=${item.name}`;
+                })
+                .catch(error => console.error('Error fetching doctors with qualification:', error));
+        } else {
+            // Handle other card clicks
+        }
     };
+
+    if (loading) return <div className="loading">Loading...</div>;
+    if (error) return <div className="error">Error: {error}</div>;
 
     return (
         <div className="home-page">
-            <h1>Онлайн консультация</h1>
+            <header className="home-header">
+                <h1>Онлайн консультация</h1>
+            </header>
 
-            <h2>Проблемы</h2>
-            <Slider {...slickSettings} className="home-slider">
-                {problems.map((problem) => (
-                    <div key={problem.slug} className="home-card">
-                        <img src={`http://127.0.0.1:8000${problem.image}`} alt={problem.name} className="home-photo" />
-                        <p>{problem.name}</p>
-                        <button onClick={() => (window.location.href = `/doctors/?qualification=${problem.slug}`)}>Learn More</button>
-                    </div>
-                ))}
-            </Slider>
+            <section className="home-section">
+                <h3>Что вас беспокоит?</h3>
+                <Carousel showThumbs={false} showStatus={false}
+                          showIndicators={true} showArrows={true} emulateTouch={true} infiniteLoop={true}
+                          centerMode={true} centerSlidePercentage={33.33} dynamicHeight={false}>
+                    {problems.map((problem) => (
+                        <div className="home-problem-card" key={problem.slug} onClick={() => handleCardClick(problem)}>
+                            <img src={`http://127.0.0.1:8000${problem.image}`} alt={problem.name}/>
+                            <p>{problem.name}</p>
+                        </div>
+                    ))}
+                </Carousel>
+            </section>
 
-            <h2>Квалификация врачей</h2>
-            <div className="home-qualifications">
-                {qualifications.map((qualification) => (
-                    <div key={qualification.slug} className="home-card">
-                        <img src={`http://127.0.0.1:8000${qualification.image}`} alt={qualification.name} className="home-photo" />
-                        <p>{qualification.name}</p>
-                        <button onClick={() => (window.location.href = `/doctors/?qualification=${qualification.slug}`)}>Find Doctors</button>
-                    </div>
-                ))}
-            </div>
+            <section className="home-section">
+                <h3>Специалисты</h3>
+                <div className="home-card-container">
+                    {qualifications.map((qualification) => (
+                        <div className="home-card" key={qualification.slug} onClick={() => handleCardClick(qualification)}>
+                            <img src={`http://127.0.0.1:8000${qualification.image}`} alt={qualification.name}/>
+                            <p>{qualification.name}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
         </div>
     );
 }
