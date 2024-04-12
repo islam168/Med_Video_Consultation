@@ -35,7 +35,7 @@ function HomePage() {
                 .then(response => response.json())
                 .then(data => {
                     setDoctors(data);
-                    window.location.href = `/doctors/?problem=${item.slug}&problem=${item.name}`;
+                    window.location.href = `/doctors/?problem=${item.slug}&problemName=${item.name}`;
                 })
                 .catch(error => console.error('Error fetching doctors with problem:', error));
         } else {

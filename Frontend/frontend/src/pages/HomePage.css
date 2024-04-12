@@ -47,7 +47,6 @@
     background-color: #fff; /* Add background color to make shadows visible */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow to the section */
     border-radius: 10px; /* Add rounded corners */
-    animation: slideInFromBottom 2s ease-in-out;
 
 }
 
