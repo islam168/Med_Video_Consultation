@@ -18,7 +18,7 @@ const Login = () => {
         const token = localStorage.getItem('token');
         if (token) {
             // If token exists, navigate to success page
-            navigate('/successful_login');
+            navigate('/');
         }
     }, [navigate]);
 
@@ -58,7 +58,7 @@ const Login = () => {
             localStorage.setItem('token', `Bearer ${token}`);
 
             // Redirect to successful login page
-            navigate('/successful_login');
+            navigate('/');
         } catch (error) {
             console.error(error);
             setErrorMessage('Неправильные учетные данные. Пожалуйста, попробуйте снова.');

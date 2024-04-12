@@ -1,0 +1,88 @@
+:root {
+    --navbar-height: 5%; /* Измените это значение на высоту вашего навбара */
+}
+
+body {
+    margin: 0;
+    padding-top: var(--navbar-height); /* Добавляем отступ к верху страницы */
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    top: 0; /* Убедитесь, что навбар прикреплен к верху страницы */
+    transition: padding 0.3s ease, height 0.3s ease; /* Добавляем transition для плавного изменения размеров */
+}
+
+.navbar.scrolled {
+    padding: 15px; /* Уменьшаем внутренний отступ при прокрутке */
+    --navbar-height: 3%; /* Уменьшаем высоту навбара при прокрутке */
+}
+
+.navbar-logo img {
+    height: 60px; /* Adjust the height as needed */
+}
+.navbar-logo {
+    margin-left: 6%;
+    align-items: center; /* Выравниваем элементы по вертикали */
+    display: flex;
+}
+.navbar-logo a {
+    text-decoration: none;
+}
+
+
+.logo-name {
+    font-size: 30px;
+    margin-left: 8px;
+    color: #006768;
+    text-decoration: none; /* Убираем подчеркивание */
+    font-weight: bold;
+}
+
+
+.navbar-links {
+    display: flex;
+    gap: 20px;
+}
+
+.navbar-links a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #007bff; /* Change to your desired hover color */
+}
+
+.navbar-buttons{
+    margin-right: 6%; /* Добавляем отступ слева */
+}
+.navbar-buttons a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-right: 10px; /* Добавляем расстояние между кнопками */
+}
+
+.navbar-buttons a:last-child {
+    margin-right: 0; /* Убираем отступ справа для последней кнопки */
+}
+
+.navbar-buttons a:hover {
+    background-color: #007bff;
+    color: white;
+}

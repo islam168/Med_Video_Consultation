@@ -6,6 +6,7 @@ const QualificationCard = ({ qualification, onClick }) => {
         <div className="qualification-card" onClick={() => onClick(qualification.slug)}>
             <img src={qualification.image} alt={qualification.name} />
             <h3>{qualification.name}</h3>
+            <p>{qualification.description}</p>
             <button>Выбрать</button>
         </div>
     );

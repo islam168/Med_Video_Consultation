@@ -51,6 +51,7 @@ class Patient(User):
 
 class Qualification(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name='Название')
+    description = models.CharField(verbose_name='Описание', max_length=150, default=None, null=True)
     image = models.ImageField(verbose_name='Изображение', upload_to=upload_image, blank=False, null=True)
     slug = models.SlugField(unique=True, blank=False, null=False, default=None)
 

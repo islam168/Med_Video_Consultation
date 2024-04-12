@@ -70,7 +70,7 @@ class QualificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Qualification
-        fields = ['name', 'slug', 'image']
+        fields = ['name', 'description', 'slug', 'image']
 
 
 class ProblemSerializer(serializers.ModelSerializer):

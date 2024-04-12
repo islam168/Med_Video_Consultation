@@ -65,8 +65,8 @@ function HomePage() {
             <header className="home-greeting">
                 <h1 className="home-big-text">Добро пожаловать в</h1>
                 <h1 className="home-big-text-2">MedClose</h1>
-                <p className="home-small-text">Здесь вы можете получить медицинскую консультацию</p>
-                <p className="home-small-text">В удобное для вас время и в любом месте</p>
+                <p className="home-small-text">Медицина без границ</p>
+                <p className="home-small-text">Забота о вашем здоровье, где бы вы ни находились!</p>
             </header>
             <div className="home-box">
 
@@ -91,6 +91,7 @@ function HomePage() {
                             <div className="home-card" key={qualification.slug} onClick={() => handleQualificationCardClick(qualification)}>
                                 <img src={`http://127.0.0.1:8000${qualification.image}`} alt={qualification.name}/>
                                 <p>{qualification.name}</p>
+                                <p className="home-card-description">{qualification.description}</p>
                             </div>
                         ))}
                     </div>

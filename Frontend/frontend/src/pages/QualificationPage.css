@@ -4,6 +4,9 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    background-color: #fff; /* Add background color to make shadows visible */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow to the section */
+    border-radius: 10px; /* Add rounded corners */
 }
 
 .qualification-page h1 {
@@ -19,12 +22,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-gap: 30px;
+    margin-bottom: 3%;
 }
 
 .qualification-card {
     border: 1px solid var(--primary-color);
     border-radius: 10px;
-    padding: 10px;
+    padding: 17px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -47,8 +51,13 @@
     color: var(--primary-color);
 }
 
+.qualification-card p {
+    font-size: 16px;
+    color: #484848;
+}
+
 .qualification-card button {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 8px 16px;
