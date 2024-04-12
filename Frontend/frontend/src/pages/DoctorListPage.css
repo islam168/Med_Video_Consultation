@@ -12,7 +12,11 @@
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+    background-color: #fff; /* Add background color to make shadows visible */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow to the section */
+    border-radius: 10px; /* Add rounded corners */
 }
+
 
 .doctor-list-page h1 {
     font-size: 2rem;
@@ -37,8 +41,12 @@
 
 .doctor-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Изменяем minmax(300px, 1fr) на minmax(400px, 1fr) */
     grid-gap: 2rem;
+    padding: 5px;
+    margin-bottom: 6%;
+    margin-top: 2.5%;
+    animation: slideInFromBottom 1.5s ease-in-out;
 }
 
 .doctor-list-card {

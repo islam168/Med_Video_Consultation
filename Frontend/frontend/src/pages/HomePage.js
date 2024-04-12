@@ -29,7 +29,21 @@ function HomePage() {
             });
     }, []);
 
-    const handleCardClick = (item) => {
+    const handleProblemCardClick = (item) => {
+        if (item.slug) {
+            fetch(`http://127.0.0.1:8000/api/users/doctors/?problem=${item.slug}`)
+                .then(response => response.json())
+                .then(data => {
+                    setDoctors(data);
+                    window.location.href = `/doctors/?problem=${item.slug}&problem=${item.name}`;
+                })
+                .catch(error => console.error('Error fetching doctors with problem:', error));
+        } else {
+            // Handle other card clicks
+        }
+    };
+
+    const handleQualificationCardClick = (item) => {
         if (item.slug) {
             fetch(`http://127.0.0.1:8000/api/users/doctors/?qualification=${item.slug}`)
                 .then(response => response.json())
@@ -62,7 +76,7 @@ function HomePage() {
                               showIndicators={true} showArrows={true} emulateTouch={true} infiniteLoop={true}
                               centerMode={true} centerSlidePercentage={33.33} dynamicHeight={false}>
                         {problems.map((problem) => (
-                            <div className="home-problem-card" key={problem.slug} onClick={() => handleCardClick(problem)}>
+                            <div className="home-problem-card" key={problem.slug} onClick={() => handleProblemCardClick(problem)}>
                                 <img src={`http://127.0.0.1:8000${problem.image}`} alt={problem.name}/>
                                 <p>{problem.name}</p>
                             </div>
@@ -74,7 +88,7 @@ function HomePage() {
                     <h3>Специалисты</h3>
                     <div className="home-card-container">
                         {qualifications.map((qualification) => (
-                            <div className="home-card" key={qualification.slug} onClick={() => handleCardClick(qualification)}>
+                            <div className="home-card" key={qualification.slug} onClick={() => handleQualificationCardClick(qualification)}>
                                 <img src={`http://127.0.0.1:8000${qualification.image}`} alt={qualification.name}/>
                                 <p>{qualification.name}</p>
                             </div>
