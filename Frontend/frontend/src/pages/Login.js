@@ -42,6 +42,7 @@ const Login = () => {
         };
     }, []);
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -51,11 +52,12 @@ const Login = () => {
                 password
             });
 
-            // Assuming your server returns a JWT token upon successful login
-            const token = response.data.access;
+            // Assuming your server returns a JWT access token and a refresh token upon successful login
+            const { access, refresh } = response.data;
 
-            // Store the token in localStorage
-            localStorage.setItem('token', `Bearer ${token}`);
+            // Store the tokens in localStorage
+            localStorage.setItem('token', `Bearer ${access}`);
+            localStorage.setItem('refreshToken', refresh);
 
             // Redirect to successful login page
             navigate('/');
@@ -114,7 +116,7 @@ const Login = () => {
                             </button>
                             {errorMessage && <p className="mt-3 text-danger text-blue">{errorMessage}</p>}
                             <div className="login-btn">
-                                Нет аккаунта? <Link to="/registration" className="text-button">Зарегистрируйтесь</Link>
+                                Нет аккаунта? <Link to="/registration" className="text-button">Зарегистрируйтесь.</Link>
                             </div>
                         </form>
                     </div>

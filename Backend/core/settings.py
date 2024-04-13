@@ -41,12 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Сторонние приложения
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_filters',
 
+    # Приложения проекта
     'apps.users',
 
 ]
@@ -77,7 +79,9 @@ SIMPLE_JWT = {
 
     'BLACKLIST_AFTER_ROTATION': True,
 
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'UPDATE_LAST_LOGIN': True,
+
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
 
     'REFRESH_TOKEN_LIFETIME': timedelta(days=60),
 

@@ -19,7 +19,7 @@
 }
 
 .welcome-text .goal-getter {
-    color: #434AF0;
+    color: var(--primary-color);
 }
 
 .background {
@@ -64,7 +64,12 @@
     margin-bottom: 8%;
 }
 .login-btn .text-button{
+    color: black; /* Установка черного цвета текста */
+    text-decoration: none; /* Убирает подчеркивание */
+    cursor: pointer; /* Добавляет указатель при наведении (опционально) */
+}
 
+.login-btn .text-button:hover{
     color: black; /* Установка черного цвета текста */
     text-decoration: none; /* Убирает подчеркивание */
     cursor: pointer; /* Добавляет указатель при наведении (опционально) */
@@ -73,7 +78,7 @@
 .registration-btn {
     /* Ваши существующие стили */
     margin-top: 4%;
-    background-color: #434AF0;
+    background-color: var(--primary-color);
     color: #fff;
     padding: 15px 15px;
     border: none;
@@ -94,6 +99,9 @@
     cursor: pointer;
 }
 
+.login-btn .text-button:hover {
+    color: #007bff;
+}
 /* Псевдоэлемент для создания черной линии */
 .registration-btn::after {
     content: "";
@@ -140,7 +148,7 @@
 
 
 .registration-btn:hover {
-    background-color: #3333A0; /* Цвет фона при наведении */
+    background-color: var(--secondary-color); /* Цвет фона при наведении */
 }
 
 .password-field {

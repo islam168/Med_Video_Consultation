@@ -1,7 +1,10 @@
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
 from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem
@@ -78,7 +81,7 @@ class QualificationListAPIView(ListAPIView):
 class HomePageAPIView(ListAPIView):
     serializer_class_problem = ProblemSerializer
     serializer_class_qualification = QualificationSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAuthenticated, ]
 
     def get_queryset_problem(self):
         return Problem.objects.all()
@@ -98,15 +101,21 @@ class HomePageAPIView(ListAPIView):
             }
         )
 
-# class LogoutView(APIView):
-#     permission_classes = [IsAuthenticated]
-#
-#     def post(self, request):
-#         try:
-#             refresh_token = request.data["refresh_token"]
-#             token = RefreshToken(refresh_token)
-#             token.blacklist()
-#
-#             return Response(status=status.HTTP_205_RESET_CONTENT)
-#         except Exception as e:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutView(APIView):
+    permission_classes = [AllowAny,]
+
+    def post(self, request):
+        # print("Request headers:", request.headers)
+        # print("Request body:", request.body)
+        # return Response(status=status.HTTP_400_BAD_REQUEST)
+        try:
+            refresh_token = request.data["refresh_token"]
+            # print("Received refresh token:", refresh_token)  # Отладочный вывод
+            token = RefreshToken(refresh_token)
+            # print("Blacklisting token:", token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            # print("Error:", e)  # Отладочный вывод
+            return Response(status=status.HTTP_400_BAD_REQUEST)
