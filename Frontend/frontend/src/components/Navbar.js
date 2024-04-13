@@ -25,21 +25,25 @@ const Navbar = () => {
         };
     }, [scrolled]);
 
-    const handleLogout = async () => {
+    // Обработчик события выхода
+    const handleLogout = () => {
         // Show the logout confirmation popup
         setShowPopup(true);
     };
 
+    // Подтверждение выхода
     const confirmLogout = async () => {
         try {
-            await Logout(navigate);
-            // Close the popup after logout
-            setShowPopup(false);
+            const token = localStorage.getItem('token'); // Получаем токен из localStorage
+            if (token) {
+                await Logout(token, navigate); // Передаем токен в функцию Logout
+                // Close the popup after logout
+                setShowPopup(false);
+            }
         } catch (error) {
             console.error('Error logging out:', error);
         }
     };
-
 
     const cancelLogout = () => {
         // Hide the popup
