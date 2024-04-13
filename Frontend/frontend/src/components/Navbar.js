@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../media_photo/logo-2.png"; // Replace with your logo image
-import "./Navbar.css"; // Create a CSS file for navbar styles
-import Logout from './Logout'; // Import the Logout function
+import logo from "../media_photo/logo-2.png";
+import "./Navbar.css";
+import Popup from './Popup'; // Import the Popup component
+import Logout from './Logout';
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
+    const [showPopup, setShowPopup] = useState(false); // State to control popup visibility
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,12 +26,24 @@ const Navbar = () => {
     }, [scrolled]);
 
     const handleLogout = async () => {
+        // Show the logout confirmation popup
+        setShowPopup(true);
+    };
+
+    const confirmLogout = async () => {
         try {
-            await Logout(navigate); // Pass navigate function to navigate after logout
+            await Logout(navigate);
+            // Close the popup after logout
+            setShowPopup(false);
         } catch (error) {
             console.error('Error logging out:', error);
-            // Handle error if needed
         }
+    };
+
+
+    const cancelLogout = () => {
+        // Hide the popup
+        setShowPopup(false);
     };
 
     return (
@@ -42,7 +56,6 @@ const Navbar = () => {
                 <Link to="/qualifications">Подобрать специалиста</Link>
             </div>
             <div className="navbar-buttons">
-                {/* Check if user is authenticated and show appropriate links */}
                 {localStorage.getItem('token') ? (
                     <button className="logout-button" onClick={handleLogout}>Выход</button>
                 ) : (
@@ -52,6 +65,14 @@ const Navbar = () => {
                     </>
                 )}
             </div>
+            {/* Render the popup if showPopup is true */}
+            {showPopup && (
+                <Popup
+                    message="Вы уверены, что хотите выйти?"
+                    confirmAction={confirmLogout}
+                    cancelAction={cancelLogout}
+                />
+            )}
         </nav>
     );
 };

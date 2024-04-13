@@ -12,7 +12,7 @@ const Logout = async (navigate) => {
         localStorage.removeItem('refreshToken');
 
         // Redirect to login page after logout
-        navigate('/login');
+        navigate('/');
     } catch (error) {
         console.error('Error logging out:', error);
         // Handle error if needed
