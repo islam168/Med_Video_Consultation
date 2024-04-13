@@ -81,7 +81,7 @@ class QualificationListAPIView(ListAPIView):
 class HomePageAPIView(ListAPIView):
     serializer_class_problem = ProblemSerializer
     serializer_class_qualification = QualificationSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [AllowAny]
 
     def get_queryset_problem(self):
         return Problem.objects.all()

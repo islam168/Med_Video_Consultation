@@ -44,7 +44,7 @@ const Navbar = () => {
             <div className="navbar-buttons">
                 {/* Check if user is authenticated and show appropriate links */}
                 {localStorage.getItem('token') ? (
-                    <button onClick={handleLogout}>Выход</button>
+                    <button className="logout-button" onClick={handleLogout}>Выход</button>
                 ) : (
                     <>
                         <Link to="/login">Вход</Link>
