@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../media_photo/logo-2.png";
+import logo from "../../media_photo/logo-2.png";
 import "./Navbar.css";
-import Popup from './Popup'; // Import the Popup component
-import Logout from './Logout';
+import Popup from '../../pages/LoginRegistration/Popup'; // Import the Popup component
+import Logout from '../../pages/LoginRegistration/Logout';
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);

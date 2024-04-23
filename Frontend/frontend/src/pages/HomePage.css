@@ -1,3 +1,8 @@
+.home-page{
+    margin: 0;
+    padding-top: var(--navbar-height);
+}
+
 .home-big-text {
     font-size: 60px;
     animation: slideInFromBottom 1.5s ease-in-out;

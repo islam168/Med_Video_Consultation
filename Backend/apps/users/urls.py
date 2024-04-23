@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.users.views import (RegistrationAPIView, MyTokenObtainPairView, DoctorCreateCardAPIView, DoctorCardAPIView,
                               DoctorPageAPIView, DoctorListAPIView, QualificationListAPIView, HomePageAPIView,
-                              LogoutView)
+                              LogoutView, CreateRoomAPIView, ValidateMeetingAPIView, GetMeteredDomainAPIView)
 
 urlpatterns = [
     path('', HomePageAPIView.as_view(), name='home_page'),
@@ -16,4 +16,8 @@ urlpatterns = [
     path('doctor/<int:id>/', DoctorPageAPIView.as_view(), name='doctor_page'),
     path('doctors/', DoctorListAPIView.as_view(), name='doctor_list'),
     path('qualifications/', QualificationListAPIView.as_view(), name='qualification_list'),
+
+    path('create/room', CreateRoomAPIView.as_view(), name='create_room'),
+    path('validate-meeting', ValidateMeetingAPIView.as_view(), name='meeting'),
+    path('metered-domain', GetMeteredDomainAPIView.as_view(), name='metered-domain'),
 ]

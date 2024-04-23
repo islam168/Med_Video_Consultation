@@ -1,0 +1,27 @@
+/* NotFound.css */
+
+.not-found-container {
+    padding-top: var(--navbar-height);
+    text-align: center;
+    margin-top: 50px;
+}
+
+.not-found-image {
+    max-width: 20%;
+    height: auto;
+}
+
+.not-found-container h1 {
+    font-size: 50px;
+    font-weight: bold;
+    color: #FF725E;
+}
+
+.not-found-container h2 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #FF725E;
+}
+
+
+

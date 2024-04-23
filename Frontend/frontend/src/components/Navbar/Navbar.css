@@ -2,10 +2,7 @@
     --navbar-height: 5%; /* Измените это значение на высоту вашего навбара */
 }
 
-body {
-    margin: 0;
-    padding-top: var(--navbar-height); /* Добавляем отступ к верху страницы */
-}
+
 
 .navbar {
     display: flex;

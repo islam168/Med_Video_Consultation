@@ -1,10 +1,14 @@
+import os
+
+import requests
+import random
+
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
 from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem
@@ -103,7 +107,7 @@ class HomePageAPIView(ListAPIView):
 
 
 class LogoutView(APIView):
-    permission_classes = [AllowAny,]
+    permission_classes = [IsAuthenticated,]
 
     def post(self, request):
         # print("Request headers:", request.headers)
@@ -119,3 +123,62 @@ class LogoutView(APIView):
         except Exception as e:
             # print("Error:", e)  # Отладочный вывод
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateRoomAPIView(CreateAPIView):
+    serializer_class = None  # Замените на ваш сериализатор
+
+    def create(self, request, *args, **kwargs):
+        METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
+        METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
+
+        print('DOMAIN', METERED_DOMAIN)
+        print('KEY', METERED_SECRET_KEY)
+
+        roomID = random.randint(101234554312, 998765432156)
+
+        url = f"https://{METERED_DOMAIN}/api/v1/room?secretKey={METERED_SECRET_KEY}"
+        payload = {
+            "roomName": roomID,
+        }
+        r = requests.post(url, data=payload)
+
+        if r.status_code == status.HTTP_200_OK:
+            print(r.json())
+            return Response(r.json(), status=status.HTTP_200_OK)
+        else:
+            return Response(r.json(), status=status.HTTP_400_BAD_REQUEST)
+
+
+class ValidateMeetingAPIView(RetrieveAPIView):
+    serializer_class = None  # Замените на ваш сериализатор
+
+    def retrieve(self, request, *args, **kwargs):
+        METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
+        METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
+
+        print('DOMAIN', type(METERED_DOMAIN))
+        print('KEY', METERED_SECRET_KEY)
+
+        roomName = request.query_params.get("roomName")
+
+        if roomName:
+            url = f"https://{METERED_DOMAIN}/api/v1/room/{roomName}?secretKey={METERED_SECRET_KEY}"
+            r = requests.get(url)
+            data = r.json()
+            if "roomName" in data:
+                return Response({"roomFound": True}, status=status.HTTP_200_OK)
+            else:
+                return Response({"roomFound": False}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"success": False, "message": "Please specify roomName"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetMeteredDomainAPIView(RetrieveAPIView):
+    serializer_class = None  # Замените на ваш сериализатор
+
+    def retrieve(self, request, *args, **kwargs):
+        METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
+
+        return Response({"METERED_DOMAIN": METERED_DOMAIN}, status=status.HTTP_200_OK)

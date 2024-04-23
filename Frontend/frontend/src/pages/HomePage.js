@@ -6,7 +6,6 @@ import './HomePage.css';
 function HomePage() {
     const [problems, setProblems] = useState([]);
     const [qualifications, setQualifications] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [doctors, setDoctors] = useState([]);
 
@@ -21,11 +20,9 @@ function HomePage() {
             .then((data) => {
                 setProblems(data.Problems);
                 setQualifications(data.Qualification);
-                setLoading(false);
             })
             .catch((error) => {
                 setError(error.message);
-                setLoading(false);
             });
     }, []);
 
@@ -57,7 +54,6 @@ function HomePage() {
         }
     };
 
-    if (loading) return <div className="loading">Loading...</div>;
     if (error) return <div className="error">Error: {error}</div>;
 
     return (

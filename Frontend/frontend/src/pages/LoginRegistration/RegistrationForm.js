@@ -74,8 +74,8 @@ const Registration = () => {
     };
 
     return (
-        <div className="background">
-            <div className="container">
+        <div className="form-background">
+            <div className="form-container">
                 <div className="row justify-content-center">
                     <div className="col-md-6">
                         <form onSubmit={handleSubmit} className="transparent-bg">

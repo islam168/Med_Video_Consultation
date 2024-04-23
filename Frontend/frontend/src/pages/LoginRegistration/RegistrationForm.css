@@ -1,12 +1,15 @@
-.container {
-    margin-top: 10px;
+.form-container {
+    padding-top: var(--navbar-height);
+    max-width: 80%;
+    margin: 0 auto; /* Закрепление по середине */
+
 }
 
 .form-group {
     margin-bottom: 15px;
 }
 
-.btn {
+.form-btn {
     margin-right: 10px;
 }
 
@@ -22,7 +25,7 @@
     color: var(--primary-color);
 }
 
-.background {
+.form-background {
     /*background-image: url('./login.png');*/
     background-repeat: no-repeat;
     background-size: cover;

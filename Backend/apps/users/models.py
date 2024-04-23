@@ -118,9 +118,9 @@ class DoctorCard(models.Model):
         on_delete=models.CASCADE,
         db_column='doctor_id',  # Явное указание имени поля внешнего ключа в БД.
     )
-    qualification = models.TextField(verbose_name='Квалификация', max_length=800)
-    education = models.TextField(verbose_name='Образование', max_length=800)
-    advanced_training = models.TextField(verbose_name='Повышение квалификации', blank=True, null=True, max_length=800)
+    qualification = models.CharField(verbose_name='Квалификация', max_length=800)
+    education = models.CharField(verbose_name='Образование', max_length=800)
+    advanced_training = models.CharField(verbose_name='Повышение квалификации', blank=True, null=True, max_length=800)
 
     class Meta:
         verbose_name = 'Информационная карточка доктора'

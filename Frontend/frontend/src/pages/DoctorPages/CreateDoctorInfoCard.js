@@ -68,7 +68,7 @@ const DoctorForm = () => {
                 console.log('Doctor card created successfully');
                 navigate('/');
             } else {
-                // Handle error
+                // Handle Error
                 console.error('Failed to create doctor card');
             }
         } catch (error) {

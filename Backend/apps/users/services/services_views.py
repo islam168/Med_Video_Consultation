@@ -1,4 +1,4 @@
-from apps.users.models import Patient, Doctor, DoctorCard
+from apps.users.models import Patient, DoctorCard
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer
 
 

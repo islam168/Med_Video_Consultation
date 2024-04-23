@@ -1,5 +1,5 @@
 .doctor-form {
-    background-image: url('../media_photo/doctor-card-background.jpg');
+    background-image: url('../../media_photo/doctor-card-background.jpg');
     /*background-color: #0064e6;*/
     background-size: cover;
     background-position: center;
@@ -7,6 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: var(--navbar-height);
 }
 
 .create-doctor-card {

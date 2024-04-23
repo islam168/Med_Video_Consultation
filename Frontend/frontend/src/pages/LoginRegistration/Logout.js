@@ -21,7 +21,7 @@ const Logout = async (token, navigate) => {
         navigate('/');
     } catch (error) {
         console.error('Error logging out:', error);
-        // Handle error if needed
+        // Handle Error if needed
     }
 };
 
