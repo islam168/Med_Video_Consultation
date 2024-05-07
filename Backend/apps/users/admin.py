@@ -1,18 +1,28 @@
 from django.contrib import admin
-from apps.users.models import Qualification, Doctor, DoctorCard, Problem
+from apps.users.models import (Qualification, Doctor, DoctorCard, Problem, DoctorSchedule, DayOfWeek,
+                               DoctorAppointmentDate, Appointment)
 
 
 admin.site.register(DoctorCard)
+admin.site.register(DayOfWeek)
+admin.site.register(DoctorAppointmentDate)
+admin.site.register(Appointment)  # Удалить потом
 
 
 @admin.register(Qualification)
 class QualificationAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('name',)}  # при вводе заголовка нового поста поле slug заполняется автоматически
+    prepopulated_fields = {'slug': ('name',)}  # При вводе заголовка нового поста поле slug заполняется автоматически.
 
 
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
+
+
+@admin.register(DoctorSchedule)
+class DoctorScheduleAdmin(admin.ModelAdmin):
+    list_display = ['doctor']
+    search_fields = ['doctor__last_name', 'doctor__first_name', 'doctor__middle_name']
 
 
 @admin.register(Doctor)

@@ -28,7 +28,7 @@ function VideoTag({ srcObject, className }) {
     const videoStyle = {
         width: '100%',
         height: 'auto',
-        maxWidth: '100%',
+        maxWidth: '740px',
         maxHeight: '100%',
         objectFit: 'contain',
     };

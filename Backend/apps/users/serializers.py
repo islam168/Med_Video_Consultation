@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from apps.users.services.services_serializers import DoctorCardServiceSerializers
-from apps.users.models import Patient, Doctor, DoctorCard, Qualification, Problem
+from apps.users.services.services_serializers import DoctorCardServiceSerializers, DoctorAppointmentTimeService
+from apps.users.models import Patient, Doctor, DoctorCard, Qualification, Problem, DoctorSchedule
 
 
 class PatientCreateSerializer(serializers.ModelSerializer):
@@ -49,12 +49,22 @@ class DoctorPageSerializer(serializers.ModelSerializer):
         fields = ['id', 'last_name', 'first_name', 'middle_name', 'qualification', 'work_experience',
                   'doctor_photo', 'doctor_card']
 
+    # Получение опыта работы доктора
     def get_work_experience(self, obj):
         dop_info = DoctorCardServiceSerializers.doctor_work_experience(obj.id)
         return dop_info
 
 
-class DoctorSerializer(serializers.ModelSerializer):
+# Время работы доктора с учетом занятых временных периодов под приемы
+class DoctorAppointmentDateTimeSerializer(serializers.Serializer):
+    date_time = serializers.SerializerMethodField()
+
+    def get_date_time(self, obj):
+        date_time = DoctorAppointmentTimeService.doctor_appointment_time(obj.id)
+        return date_time
+
+
+class DoctorListSerializer(serializers.ModelSerializer):
     work_experience = serializers.SerializerMethodField()
 
     class Meta:

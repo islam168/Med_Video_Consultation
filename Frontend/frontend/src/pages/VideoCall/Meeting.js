@@ -82,7 +82,7 @@ function Meeting({
                         </div>
                     )}
                 </div>
-                <div className="username-text text-center">
+                <div className="username-text">
                     {user.name}
                 </div>
             </div>

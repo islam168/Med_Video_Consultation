@@ -13,7 +13,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
 from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
-                                    DoctorPageSerializer, DoctorSerializer, QualificationSerializer, ProblemSerializer)
+                                    DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
+                                    ProblemSerializer, DoctorAppointmentDateTimeSerializer)
 from apps.users.services.services_views import RegistrationService, DoctorCardService
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
@@ -60,17 +61,9 @@ class DoctorCardAPIView(RetrieveUpdateAPIView):
     lookup_field = 'id'
 
 
-# Страница доктора
-class DoctorPageAPIView(RetrieveAPIView):
-    queryset = Doctor.objects.all()
-    serializer_class = DoctorPageSerializer
-    permission_classes = [AllowAny]
-    lookup_field = 'id'
-
-
 class DoctorListAPIView(ListAPIView):
     queryset = Doctor.objects.all()
-    serializer_class = DoctorSerializer
+    serializer_class = DoctorListSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = DoctorFilter
 
@@ -102,6 +95,26 @@ class HomePageAPIView(ListAPIView):
             {
                 "Problems": problem_serializer.data,
                 "Qualification": qualification_serializer.data,
+            }
+        )
+
+
+# Страница доктора
+class DoctorPageAPIView(RetrieveAPIView):
+    serializer_class_doctor = DoctorPageSerializer
+    serializer_class_date_time = DoctorAppointmentDateTimeSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'
+    queryset = Doctor.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        doctor = self.get_object()  # This will retrieve the specific doctor
+        doctor_serializer = self.serializer_class_doctor(doctor)
+        date_time_serializer = self.serializer_class_date_time(doctor)
+        return Response(
+            {
+                "Doctor": doctor_serializer.data,
+                "DateTime": date_time_serializer.data,
             }
         )
 

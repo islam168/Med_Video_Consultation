@@ -163,9 +163,87 @@ class Evaluation(models.Model):
     class Meta:
         # Обеспечивают уникальность, когда пациент оценивает доктора,
         # чтобы он не мог поставить оценку и оставить отзыв одному доктору больше 1 раза.
-        unique_together = ('doctor', 'patient')
+        unique_together = ['doctor', 'patient']
         verbose_name = 'Оценка доктора'
         verbose_name_plural = 'Оценки доктора'
 
     def __str__(self):
         return self.rate
+
+
+class DayOfWeek(models.Model):
+    name = models.CharField(max_length=20, verbose_name='Название дня', default=None)
+
+    class Meta:
+        verbose_name = 'День недели'
+        verbose_name_plural = 'Дени недели'
+
+    def __str__(self):
+        return self.name
+
+
+class DoctorSchedule(models.Model):
+    doctor = models.OneToOneField(
+        verbose_name='Доктор',
+        to='Doctor',
+        on_delete=models.CASCADE,
+        related_name='schedule'
+    )
+    days_of_week = models.ManyToManyField(
+        verbose_name='Дни недели',
+        to='DayOfWeek',
+        related_name='schedule',
+        blank=False
+    )
+    start_time = models.TimeField(verbose_name='Время начала консультаций')
+    end_time = models.TimeField(verbose_name='Время окончания консультаций')
+
+    class Meta:
+        verbose_name = 'Расписание'
+        verbose_name_plural = 'Расписания'
+
+    def __str__(self):
+        return f'Расписание {self.doctor}'
+
+
+class DoctorAppointmentDate(models.Model):
+    doctor = models.ForeignKey(
+        verbose_name='Доктор',
+        to='Doctor',
+        on_delete=models.CASCADE,
+        related_name='appointment_date',
+    )
+    date = models.DateField(verbose_name='Дата')
+
+    class Meta:
+        verbose_name = 'Дата приема'
+        verbose_name_plural = 'Даты приемов'
+        unique_together = ['doctor', 'date']
+
+    def __str__(self):
+        return f'Дата приема у доктора: {self.doctor}. Дата: {self.date}'
+
+
+class Appointment(models.Model):
+    doctor = models.ForeignKey(
+        verbose_name='Доктор',
+        to='Doctor',
+        on_delete=models.CASCADE,
+        related_name='appointment',
+    )
+    patient = models.ForeignKey(
+        verbose_name='Доктор',
+        to='Patient',
+        on_delete=models.CASCADE,
+        related_name='appointment',
+    )
+    time = models.TimeField(verbose_name='Дата')
+    date = models.DateField(verbose_name='Время')
+    # url = models.CharField(max_length=15)
+
+    class Meta:
+        verbose_name = 'Прием у доктора'
+        verbose_name_plural = 'Приемы у доктора'
+
+    def __str__(self):
+        return f'Доктор: {self.doctor}. Пациент: {self.patient}. Дата: {self.date}. Время: {self.time}.'
