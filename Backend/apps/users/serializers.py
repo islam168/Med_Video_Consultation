@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apps.users.services.services_serializers import DoctorCardServiceSerializers, DoctorAppointmentTimeService
-from apps.users.models import Patient, Doctor, DoctorCard, Qualification, Problem, DoctorSchedule
+from apps.users.models import Patient, Doctor, DoctorCard, Qualification, Problem, DoctorSchedule, Appointment
 
 
 class PatientCreateSerializer(serializers.ModelSerializer):
@@ -88,3 +88,11 @@ class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
         fields = ['name', 'slug', 'image']
+
+
+class AppointmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Appointment
+        fields = ['doctor', 'patient', 'date', 'time', 'url']
+

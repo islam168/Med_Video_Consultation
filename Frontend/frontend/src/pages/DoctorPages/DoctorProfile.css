@@ -1,72 +1,110 @@
+/* Container Styles */
 .doctor-profile {
-    max-width: 50%;
-    margin: 5% auto 0;
+    max-width: 90%;
+    margin: 6% auto 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Profile Section Styles */
+.profile {
+    width: 60%; /* Decrease the width */
     padding: 30px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
+    margin-left: 6%;
 }
-
 .profile-header {
     display: flex;
     align-items: center;
 }
 
 .doctor-photo {
-    width: 220px;
-    height: 220px;
-    margin-top: -10px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     margin-right: 20px;
-    margin-left: 3px;
 }
 
 .profile-info {
     flex-grow: 1;
 }
 
-.profile{
-    padding: 16px;
-    margin-top: 1.5%;
-}
-
-.profile-info h1 {
+.profile h1 {
     font-size: 24px;
-    margin-bottom: 30px;
-    margin-top: -50px;
+    margin: 0;
 }
 
-.profile-info h6 {
+.profile h6 {
     font-size: 16px;
-    margin-left: 5px;
-    margin-bottom: 8px;
+    margin: 5px 0;
 }
 
 .work-experience {
     font-size: 16px;
-    margin-bottom: 5px;
-    margin-top: 5px;
 }
 
+/* Doctor Card Styles */
 .doctor-card {
     margin-top: 20px;
 }
 
-.doctor-card h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
+.doctor-card h2,
+.doctor-card h6 {
     margin-left: 10px;
 }
+
 .doctor-card h6 {
-    font-size: 16px;
-    margin-bottom: 5px;
-    margin-left: 15px;
-    border-bottom: 1px solid #ccc; /* Add a bottom border to each h6 */
-    padding-bottom: 5px; /* Optional: Add padding to separate the text from the border */
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
 }
+
 .doctor-card p {
-    font-size: 16px;
-    margin-bottom: 5px;
-    margin-left: 22px;
-    margin-right: 12px;
+    margin: 1% 0 0 1.5%;
+}
+
+/* Schedule Section Styles */
+.schedule {
+    width: 30%; /* Decrease the width */
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-right: 3%;
+}
+
+.schedule h2,
+.schedule h3 {
+    margin-left: 10px;
+}
+
+.schedule h3 {
+    font-size: 18px;
+}
+
+.schedule p {
+    margin-left: 3.5%;
+}
+
+.time-buttons {
+    margin-left: 3%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.time-button {
+    margin: 0 10px 10px 0;
+    padding: 8px 12px;
+    border: 1px solid #002cff; /* changed border color to blue */
+    border-radius: 5px;
+    background-color: #002cff; /* changed background color to blue */
+    color: white; /* changed text color to white */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.time-button:hover {
+    background-color: #0000ff; /* slightly darker blue on hover */
 }

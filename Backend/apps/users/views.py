@@ -1,8 +1,5 @@
 import os
-
 import requests
-import random
-
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -11,11 +8,11 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
-from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem
+from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
-                                    ProblemSerializer, DoctorAppointmentDateTimeSerializer)
-from apps.users.services.services_views import RegistrationService, DoctorCardService
+                                    ProblemSerializer, DoctorAppointmentDateTimeSerializer, AppointmentSerializer)
+from apps.users.services.services_views import RegistrationService, DoctorCardService, CreateAppointmentService
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
 
@@ -138,29 +135,17 @@ class LogoutView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class CreateRoomAPIView(CreateAPIView):
-    serializer_class = None  # Замените на ваш сериализатор
+class CreateAppointmentAPIView(CreateAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+    permission_classes = [AllowAny, ]
 
-    def create(self, request, *args, **kwargs):
-        METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
-        METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
-
-        print('DOMAIN', METERED_DOMAIN)
-        print('KEY', METERED_SECRET_KEY)
-
-        roomID = random.randint(101234554312, 998765432156)
-
-        url = f"https://{METERED_DOMAIN}/api/v1/room?secretKey={METERED_SECRET_KEY}"
-        payload = {
-            "roomName": roomID,
-        }
-        r = requests.post(url, data=payload)
-
-        if r.status_code == status.HTTP_200_OK:
-            print(r.json())
-            return Response(r.json(), status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        result = CreateAppointmentService.create_appointment(request.data)
+        if result:
+            return Response('Success', status=status.HTTP_200_OK)
         else:
-            return Response(r.json(), status=status.HTTP_400_BAD_REQUEST)
+            return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 
 class ValidateMeetingAPIView(RetrieveAPIView):

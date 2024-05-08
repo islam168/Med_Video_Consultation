@@ -65,7 +65,7 @@ class DoctorAppointmentTimeService:
         time_intervals = []
 
         while current_time <= end_datetime:
-            time_intervals.append(current_time.time())
+            time_intervals.append(current_time.strftime('%H:%M'))
             current_time += timedelta(minutes=30)
 
         try:
@@ -94,5 +94,3 @@ class DoctorAppointmentTimeService:
             }
             result.append(date_time)
         return result
-
-

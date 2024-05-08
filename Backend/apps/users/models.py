@@ -239,7 +239,7 @@ class Appointment(models.Model):
     )
     time = models.TimeField(verbose_name='Дата')
     date = models.DateField(verbose_name='Время')
-    # url = models.CharField(max_length=15)
+    url = models.CharField(max_length=20, unique=True, default='')
 
     class Meta:
         verbose_name = 'Прием у доктора'
