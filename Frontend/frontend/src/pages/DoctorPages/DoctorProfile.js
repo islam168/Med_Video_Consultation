@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import './DoctorProfile.css'; // Import CSS file for styles
+import './DoctorProfile.css';
+import ConfirmationPopup from './ConfirmationPopup'; // Импортируйте компонент модального окна подтверждения
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from "jwt-decode";
 
 const DoctorProfile = () => {
     const [doctorData, setDoctorData] = useState(null);
+    const [showConfirmation, setShowConfirmation] = useState(false); // Добавьте состояние для отображения модального окна
+    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedTime, setSelectedTime] = useState("");
     const { id } = useParams();
 
     useEffect(() => {
@@ -21,9 +26,56 @@ const DoctorProfile = () => {
         fetchDoctorData();
     }, [id]);
 
+    const createAppointment = async (doctorId, date, time) => {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.user_id;
+
+        if (!token || !userId) {
+            console.error('User token or id not found in local storage', userId);
+            return;
+        }
+
+        const requestData = {
+            doctor: doctorId,
+            patient: parseInt(userId),
+            date: date,
+            time: time
+        };
+
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/users/create_appointment/', requestData, {
+                headers: {
+                    Authorization: `Token ${token}`
+                }
+            });
+            console.log('Appointment created successfully:', response.data);
+            // Обновление страницы после успешного создания запроса
+            window.location.reload();
+        } catch (error) {
+            console.error('Error creating appointment:', error);
+            // Добавьте здесь логику для отображения ошибки пользователю
+        }
+    };
+
+    const handleConfirmation = (date, time) => {
+        setSelectedDate(date);
+        setSelectedTime(time);
+        setShowConfirmation(true); // Показать модальное окно при нажатии на кнопку
+    };
+    const confirmAppointment = () => {
+        createAppointment(doctorData.Doctor.id, selectedDate, selectedTime);
+        setShowConfirmation(false); // Скрыть модальное окно после подтверждения
+    };
+
+    const cancelAppointment = () => {
+        setShowConfirmation(false); // Скрыть модальное окно при отмене
+    };
+
     if (!doctorData) {
         return <div className="loading">Loading...</div>;
     }
+
 
     return (
         <div className="doctor-profile">
@@ -62,7 +114,7 @@ const DoctorProfile = () => {
                                 <h3>{item.date}</h3>
                                 <div className="time-buttons">
                                     {item.time.map(time => (
-                                        <button key={time} className="time-button">{time}</button>
+                                        <button key={time} className="time-button" onClick={() => handleConfirmation(item.date, time)}>{time}</button>
                                     ))}
                                 </div>
                             </div>
@@ -70,6 +122,13 @@ const DoctorProfile = () => {
                     </div>
                 )}
             </div>
+            {showConfirmation && (
+                <ConfirmationPopup
+                    message={`Вы уверены, что хотите записаться к врачу на ${selectedDate} в ${selectedTime}?`}
+                    confirmAction={confirmAppointment}
+                    cancelAction={cancelAppointment}
+                />
+            )}
         </div>
     );
 };
