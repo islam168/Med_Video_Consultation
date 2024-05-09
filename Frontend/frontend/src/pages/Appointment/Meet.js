@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Join from "./Join";
+import Appointment from "./Appointment";
 import Meeting from "./Meeting";
 import MeetingEnded from "./MeetingEnded";
 
@@ -67,29 +67,6 @@ function Meet() {
         };
     });
 
-    // Will call the API to create a new
-    // room and join the user.
-    async function handleCreateMeeting(username) {
-        // Calling API to create room
-        const { data } = await axios.post("http://localhost:8000/api/users/create/room");
-        // Calling API to fetch Metered Domain
-        const response = await axios.get("http://localhost:8000/api/users/metered-domain");
-        // Extracting Metered Domain and Room Name
-        // From responses.
-        const METERED_DOMAIN = response.data.METERED_DOMAIN;
-        const roomName = data.roomName;
-
-        // Calling the join() of Metered SDK
-        const joinResponse = await meteredMeeting.join({
-            name: username,
-            roomURL: METERED_DOMAIN + "/" + roomName,
-        });
-
-        setUsername(username);
-        setRoomName(roomName);
-        setMeetingInfo(joinResponse);
-        setMeetingJoined(true);
-    }
 
     // Will call th API to validate the room
     // and join the user
@@ -186,8 +163,7 @@ function Meet() {
                     />
                 )
             ) : (
-                <Join
-                    handleCreateMeeting={handleCreateMeeting}
+                <Appointment
                     handleJoinMeeting={handleJoinMeeting}
                 />
             )}

@@ -1,5 +1,3 @@
-// Meeting.js
-
 import React from 'react';
 import VideoTag from './VideoTag';
 import classNames from "classnames";

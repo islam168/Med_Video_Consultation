@@ -11,7 +11,7 @@ import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import NotFoundPage from "./components/Error/NotFoundPage";
-import Meet from "./pages/VideoCall/Meet";
+import Meet from "./pages/Appointment/Meet";
 
 function App() {
     const [pathname, setPathname] = useState('');

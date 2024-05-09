@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from django.core.exceptions import ObjectDoesNotExist
 
-from apps.users.models import Patient, DoctorCard, Doctor
+from apps.users.models import Patient, DoctorCard, Doctor, Appointment
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer
 from rest_framework import status
 import os
@@ -54,12 +56,12 @@ class CreateAppointmentService:
         try:
             Doctor.objects.get(id=doctor)
         except ObjectDoesNotExist:
-            return "Doctor not found"  # Обработка случая, когда у доктора не существует расписание
+            return "Doctor not found"
 
         try:
             Patient.objects.get(id=patient)
         except ObjectDoesNotExist:
-            return "Patient not found"  # Обработка случая, когда у доктора не существует расписание
+            return "Patient not found"
 
         METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
         METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
@@ -80,3 +82,80 @@ class CreateAppointmentService:
             return True
         else:
             return False
+
+
+class AppointmentService:
+    @staticmethod
+    def appointment_list(request_user):
+        user_id = request_user.id
+
+        is_patient = False
+        try:
+            patient = Patient.objects.get(id=user_id)
+            user = patient
+            is_patient = True
+        except Patient.DoesNotExist:
+            try:
+                doctor = Doctor.objects.get(id=user_id)
+                user = doctor
+            except Doctor.DoesNotExist:
+                return "User does not exist"
+
+        past_appointment = []
+        future_appointment = []
+        today = datetime.now().date()
+
+        if is_patient:
+            appointment_list = Appointment.objects.filter(patient=user.id).order_by('date')
+
+            middle_name = user.middle_name
+
+            for appointment in appointment_list:
+                doctor = str(appointment.doctor)
+                date = str(appointment.date)
+                time = str(appointment.time.strftime('%H:%M'))
+                appointment_data = {
+                    'id': appointment.id,
+                    'doctor': doctor,
+                    'date': date,
+                    'time': time,
+                }
+                if appointment.date < today:
+                    past_appointment.append(appointment_data)
+                else:
+                    appointment_data['url'] = appointment.url
+                    future_appointment.append(appointment_data)
+
+        else:
+            appointment_list = Appointment.objects.filter(doctor=user.id).order_by('date')
+
+            middle_name = user.middle_name
+
+            for appointment in appointment_list:
+                patient = str(appointment.patient)
+                date = str(appointment.date)
+                time = str(appointment.time.strftime('%H:%M'))
+                appointment_data = {
+                    'id': appointment.id,
+                    'patient': patient,
+                    'date': date,
+                    'time': time,
+                }
+                if appointment.date < today:
+                    past_appointment.append(appointment_data)
+                else:
+                    appointment_data['url'] = appointment.url
+                    future_appointment.append(appointment_data)
+
+        full_name = f'{request_user.last_name} {request_user.first_name}'
+
+        if middle_name:
+            full_name += f' {middle_name}'
+
+        result = {
+            "UserName": full_name,
+            "PastAppointments": past_appointment,
+            "FutureAppointments": future_appointment,
+        }
+
+        return result

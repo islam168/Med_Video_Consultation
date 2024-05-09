@@ -12,7 +12,8 @@ from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Proble
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
                                     ProblemSerializer, DoctorAppointmentDateTimeSerializer, AppointmentSerializer)
-from apps.users.services.services_views import RegistrationService, DoctorCardService, CreateAppointmentService
+from apps.users.services.services_views import (RegistrationService, DoctorCardService, CreateAppointmentService,
+                                                AppointmentService)
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
 
@@ -46,7 +47,6 @@ class DoctorCreateCardAPIView(CreateAPIView):
         if success:
             return Response(message, status=status.HTTP_201_CREATED)
         else:
-            print(message)
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -114,6 +114,19 @@ class DoctorPageAPIView(RetrieveAPIView):
                 "DateTime": date_time_serializer.data,
             }
         )
+
+
+class AppointmentAPIView(ListAPIView):
+    serializer_class = AppointmentSerializer
+    permission_classes = [AllowAny]
+    queryset = Appointment.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        result = AppointmentService.appointment_list(request.user)
+        if result:
+            return Response(result, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):

@@ -9,7 +9,7 @@ const Logout = async (token, navigate) => {
             refresh_token: refreshToken
         }, {
             headers: {
-                Authorization: token // Передаем access token в заголовке запроса
+                Authorization: `${token}` // Передаем access token в заголовке запроса
             }
         });
 
