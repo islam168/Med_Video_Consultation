@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import './Appointment.css';
+import Navbar from "../../components/Navbar/Navbar";
+import Footer from "../../components/Footer/Footer";
 
 function Appointment({ handleJoinMeeting }) {
     const [futureAppointments, setFutureAppointments] = useState([]);
@@ -50,35 +52,39 @@ function Appointment({ handleJoinMeeting }) {
     }, []);
 
     return (
-        <div className="appointment-container">
-            <h2 className="appointment-title">Предстоящие приемы</h2>
-            <ul className="appointment-list">
-                {futureAppointments.map(appointment => (
-                    <li key={appointment.id} className="appointment-item">
-                        <div className="appointment-info">{appointment.entity === 'doctor' ? 'Доктор' : 'Пациент'}: {appointment.entity === 'doctor' ? appointment.doctor : appointment.patient}</div>
-                        <div className="appointment-info">Дата: {appointment.date}</div>
-                        <div className="appointment-info">Время: {appointment.time}</div>
-                        <button
-                            className="appointment-button"
-                            onClick={() => {
-                                handleJoinMeeting(appointment.url, userName); // Pass userName instead of data.UserName
-                            }}
-                        >
-                            Войти
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            <h2 className="appointment-title">Прошедшие приемы</h2>
-            <ul className="appointment-list">
-                {pastAppointments.map(appointment => (
-                    <li key={appointment.id} className="appointment-item">
-                        <div className="appointment-info">{appointment.entity === 'doctor' ? 'Доктор' : 'Пациент'}: {appointment.entity === 'doctor' ? appointment.doctor : appointment.patient}</div>
-                        <div className="appointment-info">Дата: {appointment.date}</div>
-                        <div className="appointment-info">Время: {appointment.time}</div>
-                    </li>
-                ))}
-            </ul>
+        <div>
+            <Navbar /> {/* Add Navbar here */}
+            <div className="appointment-container">
+                <h2 className="appointment-title">Предстоящие приемы</h2>
+                <ul className="appointment-list">
+                    {futureAppointments.map(appointment => (
+                        <li key={appointment.id} className="appointment-item">
+                            <div className="appointment-info">{appointment.entity === 'doctor' ? 'Доктор' : 'Пациент'}: {appointment.entity === 'doctor' ? appointment.doctor : appointment.patient}</div>
+                            <div className="appointment-info">Дата: {appointment.date}</div>
+                            <div className="appointment-info">Время: {appointment.time}</div>
+                            <button
+                                className="appointment-button"
+                                onClick={() => {
+                                    handleJoinMeeting(appointment.url, userName); // Pass userName instead of data.UserName
+                                }}
+                            >
+                                Войти
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+                <h2 className="appointment-title">Прошедшие приемы</h2>
+                <ul className="appointment-list">
+                    {pastAppointments.map(appointment => (
+                        <li key={appointment.id} className="appointment-item">
+                            <div className="appointment-info">{appointment.entity === 'doctor' ? 'Доктор' : 'Пациент'}: {appointment.entity === 'doctor' ? appointment.doctor : appointment.patient}</div>
+                            <div className="appointment-info">Дата: {appointment.date}</div>
+                            <div className="appointment-info">Время: {appointment.time}</div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <Footer /> {/* Add Footer here */}
         </div>
     );
 }
