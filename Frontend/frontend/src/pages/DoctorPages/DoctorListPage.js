@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 import './DoctorListPage.css';
 
 const DoctorListCard = ({ doctor, onClick }) => {
@@ -9,6 +11,13 @@ const DoctorListCard = ({ doctor, onClick }) => {
             </div>
             <div className="doctor-list-info">
                 <h3>{`${doctor.last_name} ${doctor.first_name} ${doctor.middle_name}`}</h3>
+                {doctor.average_rating !== null ? (
+                    <p className="average-rating">
+                        Рейтинг: {doctor.average_rating} <FontAwesomeIcon icon={faHeartPulse} style={{ color: 'red' }} />
+                    </p>
+                ) : (
+                    <p className="no-rating">У данного доктора нет рейтинга</p>
+                )}
                 <p className="work-experience">Стаж: {doctor.work_experience}</p>
             </div>
         </div>
@@ -25,17 +34,17 @@ const DoctorListPage = () => {
             try {
                 const searchParams = new URLSearchParams(window.location.search);
                 const qualificationSlug = searchParams.get('qualification');
-                const problemSlug = searchParams.get('problem'); // Get problem slug from URL
+                const problemSlug = searchParams.get('problem');
                 let apiUrl = 'http://127.0.0.1:8000/api/users/doctors/?';
 
                 if (qualificationSlug) {
                     apiUrl += `qualification=${qualificationSlug}`;
-                    const qualificationName = searchParams.get('qualificationName'); // Extract qualification name from URL
-                    setQualificationName(qualificationName); // Set the qualification name
+                    const qualificationName = searchParams.get('qualificationName');
+                    setQualificationName(qualificationName);
                 } else if (problemSlug) {
                     apiUrl += `problem=${problemSlug}`;
-                    const problemName = searchParams.get('problemName'); // Extract problem name from URL
-                    setProblemName(problemName); // Set the problem name
+                    const problemName = searchParams.get('problemName');
+                    setProblemName(problemName);
                 }
 
                 const response = await fetch(apiUrl);

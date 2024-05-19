@@ -1,22 +1,25 @@
 import os
 import requests
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, \
+    ListCreateAPIView, UpdateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
-from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment
+from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
-                                    ProblemSerializer, DoctorAppointmentDateTimeSerializer, AppointmentSerializer)
-from apps.users.services.services_views import (RegistrationService, DoctorCardService, CreateAppointmentService,
+                                    ProblemSerializer, AppointmentSerializer, EvaluationSerializer)
+from apps.users.services.services_views import (RegistrationService, DoctorService, CreateAppointmentService,
                                                 AppointmentService)
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
+import logging
 
+logger = logging.getLogger(__name__)
 
 class RegistrationAPIView(CreateAPIView):
     queryset = Patient.objects.all()
@@ -43,7 +46,7 @@ class DoctorCreateCardAPIView(CreateAPIView):
     permission_classes = [IsDoctor,]
 
     def post(self, request, *args, **kwargs):
-        success, message = DoctorCardService.create_doctor_card(request.data)
+        success, message = DoctorService.create_doctor_card(request.data)
         if success:
             return Response(message, status=status.HTTP_201_CREATED)
         else:
@@ -98,22 +101,43 @@ class HomePageAPIView(ListAPIView):
 
 # Страница доктора
 class DoctorPageAPIView(RetrieveAPIView):
-    serializer_class_doctor = DoctorPageSerializer
-    serializer_class_date_time = DoctorAppointmentDateTimeSerializer
+    serializer_class = DoctorPageSerializer
     permission_classes = [AllowAny]
     lookup_field = 'id'
     queryset = Doctor.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
-        doctor = self.get_object()  # This will retrieve the specific doctor
-        doctor_serializer = self.serializer_class_doctor(doctor)
-        date_time_serializer = self.serializer_class_date_time(doctor)
-        return Response(
-            {
-                "Doctor": doctor_serializer.data,
-                "DateTime": date_time_serializer.data,
-            }
-        )
+        doctor = self.get_object()
+        serializer = self.get_serializer(doctor)
+        return Response(serializer.data)
+
+
+class EvaluationRetrieveAPIView(RetrieveUpdateAPIView):
+    serializer_class = EvaluationSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+    queryset = Evaluation.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        result = DoctorService.create_update_evaluation(self.request)
+        print(request.data)
+        if result:
+            return result
+        else:
+            return result
+
+
+class EvaluationCreateAPIView(ListCreateAPIView):
+    queryset = Evaluation.objects.all()
+    serializer_class = EvaluationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        result = DoctorService.create_update_evaluation(self.request)
+        if result:
+            return result
+        else:
+            return result
 
 
 class AppointmentAPIView(ListAPIView):

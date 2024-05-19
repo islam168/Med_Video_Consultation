@@ -1,30 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './DoctorProfile.css';
-import ConfirmationPopup from './ConfirmationPopup'; // Импортируйте компонент модального окна подтверждения
+import ConfirmationPopup from './ConfirmationPopup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
-import { jwtDecode } from "jwt-decode";
+import {faHeartPulse} from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from 'jwt-decode';
+
 
 const DoctorProfile = () => {
     const [doctorData, setDoctorData] = useState(null);
-    const [showConfirmation, setShowConfirmation] = useState(false); // Добавьте состояние для отображения модального окна
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedTime, setSelectedTime] = useState("");
+    const [rating, setRating] = useState(0);
+    const [review, setReview] = useState("");
     const { id } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDoctorData = async () => {
+            const token = localStorage.getItem('token');
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/users/doctor/${id}/`);
+                const response = await axios.get(`http://127.0.0.1:8000/api/users/doctor/${id}/`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                });
                 setDoctorData(response.data);
+                if (response.data.current_user_evaluation.length > 0) {
+                    const { rate, review } = response.data.current_user_evaluation[0];
+                    setRating(rate);
+                    setReview(review);
+                }
             } catch (error) {
                 console.error('Error fetching doctor data:', error);
             }
         };
         fetchDoctorData();
     }, [id]);
+
+    const handleRatingChange = (e) => setRating(e.target.value);
+    const handleReviewChange = (e) => setReview(e.target.value);
+
+    const submitEvaluation = async () => {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.user_id;
+
+        if (!token || !userId) {
+            console.error('User token or id not found in local storage');
+            return;
+        }
+
+        const evaluationData = {
+            doctor: doctorData.id,
+            patient: parseInt(userId),
+            rate: parseInt(rating),
+            review: review
+        };
+
+        try {
+            let response;
+            if (doctorData.current_user_evaluation.length > 0) {
+                // Update existing evaluation
+                const evaluationId = doctorData.current_user_evaluation[0].id;
+                response = await axios.put(`http://127.0.0.1:8000/api/users/evaluation/${evaluationId}/`, {
+                    ...evaluationData,
+                    id: evaluationId
+                }, {
+                    headers: {
+                        Authorization: `${token}`
+                    }
+                });
+            } else {
+                // Create new evaluation
+                response = await axios.post('http://127.0.0.1:8000/api/users/evaluation/', evaluationData, {
+                    headers: {
+                        Authorization: `${token}`
+                    }
+                });
+            }
+            console.log('Evaluation submitted successfully:', response.data);
+            setDoctorData(prevData => ({
+                ...prevData,
+                current_user_evaluation: [response.data]
+            }));
+        } catch (error) {
+            console.error('Error submitting evaluation:', error);
+        }
+    };
 
     const createAppointment = async (doctorId, date, time) => {
         const token = localStorage.getItem('token');
@@ -46,70 +112,131 @@ const DoctorProfile = () => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/users/create_appointment/', requestData, {
                 headers: {
-                    Authorization: `Token ${token}`
+                    Authorization: `${token}`
                 }
             });
             console.log('Appointment created successfully:', response.data);
-            // Обновление страницы после успешного создания запроса
-            window.location.reload();
+            navigate('/meet');
         } catch (error) {
             console.error('Error creating appointment:', error);
-            // Добавьте здесь логику для отображения ошибки пользователю
         }
     };
 
     const handleConfirmation = (date, time) => {
         setSelectedDate(date);
         setSelectedTime(time);
-        setShowConfirmation(true); // Показать модальное окно при нажатии на кнопку
+        setShowConfirmation(true);
     };
+
     const confirmAppointment = () => {
-        createAppointment(doctorData.Doctor.id, selectedDate, selectedTime);
-        setShowConfirmation(false); // Скрыть модальное окно после подтверждения
+        createAppointment(doctorData.id, selectedDate, selectedTime);
+        setShowConfirmation(false);
     };
 
     const cancelAppointment = () => {
-        setShowConfirmation(false); // Скрыть модальное окно при отмене
+        setShowConfirmation(false);
     };
 
     if (!doctorData) {
         return <div className="loading">Loading...</div>;
     }
 
+    const isAnonymous = !localStorage.getItem('token');
 
     return (
         <div className="doctor-profile">
             <div className="profile">
                 <div className="profile-header">
-                    <img src={`http://127.0.0.1:8000${doctorData.Doctor.doctor_photo}`} alt={`${doctorData.Doctor.first_name} ${doctorData.Doctor.last_name}`} className="doctor-photo" />
+                    <img src={doctorData.doctor_photo} alt={`${doctorData.first_name} ${doctorData.last_name}`} className="doctor-photo" />
                     <div className="profile-info">
-                        <h1>{`${doctorData.Doctor.last_name} ${doctorData.Doctor.first_name}${doctorData.Doctor.middle_name ? ' ' + doctorData.Doctor.middle_name : ''}`}</h1>
-                        <h6>Специализация: {doctorData.Doctor.qualification}</h6>
-                        <h6 className="work-experience">Стаж работы: {doctorData.Doctor.work_experience}</h6>
-                        <h6 className="docot-rating">Рейтинг: 4.5 {doctorData.rating} <FontAwesomeIcon icon={faHeart} style={{ color: 'red' }} /></h6>
+                        <h1>{`${doctorData.last_name} ${doctorData.first_name}${doctorData.middle_name ? ' ' + doctorData.middle_name : ''}`}</h1>
+                        <h6>Специализация: {doctorData.qualification}</h6>
+                        <h6 className="work-experience">Стаж работы: {doctorData.work_experience}</h6>
+                        <h6 className="docot-rating">Рейтинг: {doctorData.average_rating} <FontAwesomeIcon icon={faHeartPulse} style={{ color: 'red' }} /></h6>
                     </div>
                 </div>
                 <div className="doctor-card">
                     <h2>Квалификация и образование</h2>
                     <h6>Квалификация</h6>
-                    <p>{doctorData.Doctor.doctor_card.qualification}</p>
+                    <p>{doctorData.doctor_card.qualification}</p>
                     <h6>Образование</h6>
-                    <p>{doctorData.Doctor.doctor_card.education}</p>
-                    {doctorData.Doctor.doctor_card.advanced_training && (
+                    <p>{doctorData.doctor_card.education}</p>
+                    {doctorData.doctor_card.advanced_training && (
                         <>
                             <h6>Повышение квалификации</h6>
-                            <p>{doctorData.Doctor.doctor_card.advanced_training}</p>
+                            <p>{doctorData.doctor_card.advanced_training}</p>
                         </>
                     )}
                 </div>
+                <h2 className="reviews">Отзывы</h2>
+                <div className="evaluation-section">
+                    {isAnonymous ? (
+                        <h2>Вы должны войти в систему, чтобы оставить отзыв.</h2>
+                    ) : (
+                        <>
+                        {doctorData.current_user_evaluation === "Patient does not have any appointment with this doctor" ? (
+                            <>
+                                <h2>Ваш отзыв</h2>
+                                <p>Вы не можете поставить оценку данному доктору, так как вы не пользовались его услугами ранее</p>
+                            </>
+                        ) : (
+                            <form onSubmit={submitEvaluation}>
+                                <h2>Ваш отзыв</h2>
+                                <label className="rating-label">Оценка:</label>
+                                <div className="rating-options">
+                                    {[1, 2, 3, 4, 5].map(option => (
+                                        <label key={option} className="rating-option">
+                                            <div className="option-container">
+                                                <input
+                                                    type="radio"
+                                                    name="rating"
+                                                    value={option}
+                                                    checked={parseInt(rating) === option}
+                                                    onChange={handleRatingChange}
+                                                />
+                                                <span className="option-icon">
+                                                        {option} <FontAwesomeIcon icon={faHeartPulse} style={{ color: 'red' }} />
+                                                </span>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+                                <label>
+                                    Отзыв:
+                                    <textarea value={review} onChange={handleReviewChange} />
+                                </label>
+                                <button type="submit">Отправить</button>
+                            </form>
+                        )}
+                        </>
+                    )}
+                </div>
+
+                <div className="all-evaluations">
+                    <h2>Отзывы пациентов</h2>
+                    {doctorData.evaluations.length === 0 ? (
+                        <p>У этого доктора еще нет отзывов.</p>
+                    ) : (
+                        <ul>
+                            {doctorData.evaluations.map(evaluation => (
+                                <li key={evaluation.id}>
+                                    <p><strong>Пользователь:</strong> {evaluation.patient}</p>
+                                    <p><strong>Оценка:</strong> {evaluation.rate}</p>
+                                    <p><strong>Отзыв:</strong> {evaluation.review ? evaluation.review : "Отзыв отсутствует"}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             </div>
+
             <div className="schedule">
                 <h2>Расписание</h2>
-                {typeof doctorData.DateTime.date_time === 'string' && doctorData.DateTime.date_time === 'Doctor does not have schedule' ? (
+                {doctorData.date_time.length === 0 ? (
                     <p>У доктора нет доступного времени для приемов</p>
                 ) : (
                     <div>
-                        {doctorData.DateTime.date_time.map(item => (
+                        {Array.isArray(doctorData.date_time) && doctorData.date_time.map(item => (
                             <div key={item.date}>
                                 <h3>{item.date}</h3>
                                 <div className="time-buttons">
@@ -122,6 +249,7 @@ const DoctorProfile = () => {
                     </div>
                 )}
             </div>
+
             {showConfirmation && (
                 <ConfirmationPopup
                     message={`Вы уверены, что хотите записаться к врачу на ${selectedDate} в ${selectedTime}?`}

@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -130,47 +131,6 @@ class DoctorCard(models.Model):
         return f"Информационная карта: ID:{self.id}, Доктор:{self.doctor_id}"
 
 
-class Evaluation(models.Model):
-    doctor = models.ForeignKey(
-        verbose_name='Доктор',
-        to='Doctor',
-        related_name='evaluations',
-        on_delete=models.CASCADE,
-    )
-    patient = models.ForeignKey(
-        verbose_name='Пользователь',
-        to='Patient',
-        related_name='evaluations',
-        on_delete=models.CASCADE,
-    )
-    rate = models.PositiveIntegerField(
-        verbose_name='Оценка',
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-    )
-    review = models.CharField(
-        verbose_name='Отзыв',
-        max_length=150,
-        blank=True,
-        null=True,
-    )
-    # Статус видимости оценки другим пользователям, исключение администратор,
-    # он может просматривать все оценки для анализа работы докторов.
-    published = models.BooleanField(
-        verbose_name='Оценка видна другим',
-        default=False,
-    )
-
-    class Meta:
-        # Обеспечивают уникальность, когда пациент оценивает доктора,
-        # чтобы он не мог поставить оценку и оставить отзыв одному доктору больше 1 раза.
-        unique_together = ['doctor', 'patient']
-        verbose_name = 'Оценка доктора'
-        verbose_name_plural = 'Оценки доктора'
-
-    def __str__(self):
-        return self.rate
-
-
 class DayOfWeek(models.Model):
     name = models.CharField(max_length=20, verbose_name='Название дня', default=None)
 
@@ -246,4 +206,39 @@ class Appointment(models.Model):
         verbose_name_plural = 'Приемы у доктора'
 
     def __str__(self):
-        return f'Доктор: {self.doctor}. Пациент: {self.patient}. Дата: {self.date}. Время: {self.time}.'
+        return f'Доктор: {self.doctor}. Пациент: {self.patient.email}. Дата: {self.date}. Время: {self.time}.'
+
+
+class Evaluation(models.Model):
+    doctor = models.ForeignKey(
+        verbose_name='Доктор',
+        to='Doctor',
+        related_name='evaluations',
+        on_delete=models.CASCADE,
+    )
+    patient = models.ForeignKey(
+        verbose_name='Пользователь',
+        to='Patient',
+        related_name='evaluations',
+        on_delete=models.CASCADE,
+    )
+    rate = models.PositiveIntegerField(
+        verbose_name='Оценка',
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
+    review = models.CharField(
+        verbose_name='Отзыв',
+        max_length=250,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        # Обеспечивают уникальность, когда пациент оценивает доктора,
+        # чтобы он не мог поставить оценку и оставить отзыв одному доктору больше 1 раза.
+        unique_together = ['doctor', 'patient']
+        verbose_name = 'Оценка доктора'
+        verbose_name_plural = 'Оценки доктора'
+
+    def __str__(self):
+        return f'{self.doctor} {self.patient.email}'

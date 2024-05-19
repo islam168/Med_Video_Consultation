@@ -108,3 +108,110 @@
 .time-button:hover {
     background-color: #0000ff; /* slightly darker blue on hover */
 }
+.evaluation-section {
+    margin: 2% 0 0 1.5%;
+}
+
+.evaluation-section p {
+    margin: 1% 0 0 0.5%;
+}
+
+.evaluation-section h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.evaluation-section form {
+    margin-bottom: 20px;
+}
+
+.evaluation-section label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.evaluation-section select,
+.evaluation-section textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+}
+
+.evaluation-section button[type="submit"] {
+    background-color: #002cff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.evaluation-section button[type="submit"]:hover {
+    background-color: #0000ff;
+}
+
+.all-evaluations {
+    margin: 2% 0 0 1.5%;
+}
+
+.all-evaluations h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.all-evaluations ul {
+    list-style: none;
+    padding: 0;
+}
+
+.all-evaluations li {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.all-evaluations li p {
+    margin: 0;
+}
+
+.rating-label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.rating-options {
+    display: flex;
+}
+
+.option-container {
+    display: flex;
+    align-items: center;
+}
+
+.option-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 5px; /* Можно добавить отступ для иконки, если нужно */
+}
+.option-icon > svg {
+    margin-left: 3px; /* Расстояние между числом и иконкой */
+}
+
+.rating-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Если нужно, можно добавить отступ между элементами */
+}
+
+.rating-option input {
+    margin-right: 5px;
+}
+
+.reviews {
+    margin-bottom: 10px;
+    margin-top: 20px;
+}

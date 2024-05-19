@@ -2,8 +2,9 @@ from datetime import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from apps.users.models import Patient, DoctorCard, Doctor, Appointment
-from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer
+from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation
+from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer, \
+    EvaluationSerializer
 from rest_framework import status
 import os
 import requests
@@ -29,7 +30,7 @@ class RegistrationService:
             return False, serializer.errors
 
 
-class DoctorCardService:
+class DoctorService:
     @staticmethod
     def create_doctor_card(data):
         doctor_id = data.get('doctor_id')
@@ -45,6 +46,38 @@ class DoctorCardService:
             return True, 'Card was successfully created'
         else:
             return False, serializer.errors
+
+    @staticmethod
+    def create_update_evaluation(request):
+        data = request.data
+        data['patient'] = request.user.id
+
+        if 'id' in data:
+            try:
+                instance = Evaluation.objects.get(id=data['id'])
+                serializer = EvaluationSerializer(instance, data=data)
+            except Evaluation.DoesNotExist:
+                print(1)
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status=status.HTTP_200_OK)
+            else:
+                print(2)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if not Evaluation.objects.filter(doctor=data['doctor'], patient=data['patient']).exists():
+                serializer = EvaluationSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(status=status.HTTP_201_CREATED)
+                else:
+                    print(3)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                print(4)
+                return Response('Evaluation already exists', status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateAppointmentService:
@@ -116,6 +149,7 @@ class AppointmentService:
                 time = str(appointment.time.strftime('%H:%M'))
                 appointment_data = {
                     'id': appointment.id,
+                    'doctor_id': appointment.doctor.id,
                     'doctor': doctor,
                     'date': date,
                     'time': time,
@@ -137,6 +171,7 @@ class AppointmentService:
                 time = str(appointment.time.strftime('%H:%M'))
                 appointment_data = {
                     'id': appointment.id,
+                    'patient_id': appointment.patient.id,
                     'patient': patient,
                     'date': date,
                     'time': time,

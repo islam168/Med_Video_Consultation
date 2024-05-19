@@ -9,14 +9,12 @@ const Footer = () => {
             <div className="footer-container">
                 <div className="footer-content">
                     <div className="footer-links">
-                        <a href="/">Home</a>
-                        <a href="/about">About</a>
-                        <a href="/contact">Contact</a>
+                        <a href="/">Главная страница</a>
+                        <a href="/meet">Расписание приемов</a>
                     </div>
                     <div className="footer-info">
-                        <p>&copy; 2024 MedClose. Все права защищены.</p>
-                        <p>Address: 123 Main St, City, Country</p>
-                        <p>Email: info@example.com</p>
+                        <p>&copy; 2024 MedClose</p>
+                        <p>Все права защищены</p>
                     </div>
                 </div>
             </div>

@@ -42,3 +42,21 @@
 .appointment-button:hover {
     background-color: #004d49;
 }
+
+/* Добавляем стили для span */
+.appointment-info span {
+    text-decoration: none; /* Убираем подчеркивание */
+    cursor: pointer; /* Устанавливаем курсор в виде указателя */
+}
+
+/* Стили для Link из react-router-dom */
+.appointment-info a {
+    text-decoration: none; /* Убираем подчеркивание */
+    color: #151414; /* Цвет ссылки */
+    cursor: pointer; /* Устанавливаем курсор в виде указателя */
+    transition: color 0.3s ease; /* Плавное изменение цвета при наведении */
+}
+
+.appointment-info a:hover {
+    color: #007bff; /* Цвет ссылки при наведении */
+}

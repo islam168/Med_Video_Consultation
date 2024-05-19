@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Импортируем Link из react-router-dom
 import './Appointment.css';
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
@@ -9,6 +10,7 @@ function Appointment({ handleJoinMeeting }) {
     const [userName, setUserName] = useState("");
 
     useEffect(() => {
+
         async function fetchAppointments() {
             const token = localStorage.getItem('token');
             try {
@@ -59,13 +61,24 @@ function Appointment({ handleJoinMeeting }) {
                 <ul className="appointment-list">
                     {futureAppointments.map(appointment => (
                         <li key={appointment.id} className="appointment-item">
-                            <div className="appointment-info">{appointment.entity === 'doctor' ? 'Доктор' : 'Пациент'}: {appointment.entity === 'doctor' ? appointment.doctor : appointment.patient}</div>
+                            <div className="appointment-info">
+                                {/* Проверяем, является ли запись доктором, чтобы создать ссылку */}
+                                {appointment.entity === 'doctor' ? (
+                                    <span>Доктор: <Link to={`/doctor/${appointment.doctor_id}`}>
+                                        {appointment.doctor}
+                                    </Link>
+                                    </span>
+                                ) : (
+                                    // Если это пациент, просто отображаем имя без ссылки
+                                    `Пациент: ${appointment.patient}`
+                                )}
+                            </div>
                             <div className="appointment-info">Дата: {appointment.date}</div>
                             <div className="appointment-info">Время: {appointment.time}</div>
                             <button
                                 className="appointment-button"
                                 onClick={() => {
-                                    handleJoinMeeting(appointment.url, userName); // Pass userName instead of data.UserName
+                                    handleJoinMeeting(appointment.url, userName);
                                 }}
                             >
                                 Войти
@@ -77,8 +90,18 @@ function Appointment({ handleJoinMeeting }) {
                 <ul className="appointment-list">
                     {pastAppointments.map(appointment => (
                         <li key={appointment.id} className="appointment-item">
-                            <div className="appointment-info">{appointment.entity === 'doctor' ? 'Доктор' : 'Пациент'}: {appointment.entity === 'doctor' ? appointment.doctor : appointment.patient}</div>
-                            <div className="appointment-info">Дата: {appointment.date}</div>
+                            <div className="appointment-info">
+                                {/* Проверяем, является ли запись доктором, чтобы создать ссылку */}
+                                {appointment.entity === 'doctor' ? (
+                                    <span>Доктор: <Link to={`/doctor/${appointment.doctor_id}`}>
+                                        {appointment.doctor}
+                                    </Link>
+                                         </span>
+                                ) : (
+                                    // Если это пациент, просто отображаем имя без ссылки
+                                    `Пациент: ${appointment.patient}`
+                                )}
+                            </div>                            <div className="appointment-info">Дата: {appointment.date}</div>
                             <div className="appointment-info">Время: {appointment.time}</div>
                         </li>
                     ))}
