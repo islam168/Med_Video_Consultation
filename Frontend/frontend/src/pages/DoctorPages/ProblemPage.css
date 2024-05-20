@@ -1,4 +1,4 @@
-.qualification-page {
+.problem-page {
     max-width: 1200px;
     margin: 5% auto 0;
     padding: 30px;
@@ -7,7 +7,7 @@
     border-radius: 10px;
 }
 
-.qualification-page h1 {
+.problem-page h1 {
     font-size: 35px;
     color: var(--primary-color);
     margin-bottom: 20px;
@@ -16,14 +16,14 @@
     padding-bottom: 0.5rem; /* Add some space between the name and the line */
 }
 
-.qualification-list {
+.problem-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-gap: 30px;
     margin-bottom: 3%;
 }
 
-.qualification-card {
+.problem-card {
     border: 1px solid var(--primary-color);
     border-radius: 10px;
     padding: 17px;
@@ -32,29 +32,29 @@
     transition: transform 0.3s ease;
 }
 
-.qualification-card:hover {
+.problem-card:hover {
     transform: translateY(-5px);
 }
 
-.qualification-card img {
+.problem-card img {
     max-width: 100%;
     height: 250px; /* Adjust the height as needed */
     border-radius: 10px;
     object-fit: cover;
 }
 
-.qualification-card h3 {
+.problem-card h3 {
     margin-top: 10px;
     font-size: 18px;
     color: var(--primary-color);
 }
 
-.qualification-card p {
+.problem-card p {
     font-size: 16px;
     color: #484848;
 }
 
-.qualification-card button {
+.problem-card button {
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -64,31 +64,6 @@
     transition: background-color 0.3s ease;
 }
 
-.qualification-card button:hover {
+.problem-card button:hover {
     background-color: #004d49; /* Darker shade of green */
-}
-
-/* New styles for search input */
-.search-input {
-    width: 100%;
-    max-width: 90%;
-    text-align: center;
-    display: block;
-    margin: 0 auto 20px;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: 1px solid var(--primary-color);
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease;
-}
-
-.search-input:focus {
-    border-color: #004d49;
-    outline: none;
-}
-
-/* Пустой placeholder при фокусе */
-.search-input:focus::placeholder {
-    color: transparent;
 }

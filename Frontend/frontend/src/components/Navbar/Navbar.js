@@ -8,6 +8,7 @@ import Logout from '../../pages/LoginRegistration/Logout';
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [showPopup, setShowPopup] = useState(false); // State to control popup visibility
+    const [showDropdown, setShowDropdown] = useState(false); // State to control dropdown visibility
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -57,7 +58,19 @@ const Navbar = () => {
                 <Link to="/"><span className="logo-name">MedClose</span></Link>
             </div>
             <div className="navbar-links">
-                <Link to="/qualifications">Подобрать специалиста</Link>
+                <div
+                    className="dropdown"
+                    onMouseEnter={() => setShowDropdown(true)}
+                    onMouseLeave={() => setShowDropdown(false)}
+                >
+                    <Link to="#" className="dropbtn">Подобрать специалиста</Link>
+                    {showDropdown && (
+                        <div className="dropdown-content">
+                            <Link to="/qualifications">По специализации</Link>
+                            <Link to="/problems">По проблеме</Link>
+                        </div>
+                    )}
+                </div>
                 {localStorage.getItem('token') && <Link to="/meet">Расписание приемов</Link>}
                 {localStorage.getItem('token') && <Link to="/favorites">Избранное</Link>}
             </div>

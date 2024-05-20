@@ -22,7 +22,6 @@ class PatientCreateSerializer(serializers.ModelSerializer):
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        print(user)
         user_identification = TokenService.user_identification(user.id)
         token = super().get_token(user)
 
@@ -113,11 +112,12 @@ class DoctorPageSerializer(serializers.ModelSerializer):
 class DoctorListSerializer(serializers.ModelSerializer):
     work_experience = serializers.SerializerMethodField()
     average_rating = serializers.SerializerMethodField()
+    qualification = serializers.CharField(source='qualification.name', read_only=True)
 
     class Meta:
         model = Doctor
         fields = ['id', 'last_name', 'first_name', 'middle_name', 'work_experience',
-                  'doctor_photo', 'average_rating']
+                  'doctor_photo', 'average_rating', 'qualification']
 
     def get_work_experience(self, obj):
         dop_info = DoctorService.doctor_work_experience(obj.id)

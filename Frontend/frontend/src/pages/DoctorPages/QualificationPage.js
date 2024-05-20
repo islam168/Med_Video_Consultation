@@ -14,7 +14,8 @@ const QualificationCard = ({ qualification, onClick }) => {
 
 const QualificationPage = () => {
     const [qualifications, setQualifications] = useState([]);
-    const [doctors, setDoctors] = useState([]); // Определение состояния для списка докторов
+    const [doctors, setDoctors] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetch('http://127.0.0.1:8000/api/users/qualifications/')
@@ -27,19 +28,33 @@ const QualificationPage = () => {
         fetch(`http://127.0.0.1:8000/api/users/doctors/?qualification=${qualification.slug}`)
             .then(response => response.json())
             .then(data => {
-                setDoctors(data); // Update the list of doctors
-                window.location.href = `/doctors/?qualification=${qualification.slug}&qualificationName=${qualification.name}`;
+                setDoctors(data);
+                window.location.href = `/doctors/?qualification=${qualification.slug}`;
             })
             .catch(error => console.error('Error fetching doctors with qualification:', error));
     };
 
+    const handleSearchChange = event => {
+        setSearchTerm(event.target.value);
+    };
 
+    const filteredQualifications = qualifications.filter(qualification =>
+        qualification.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        qualification.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <div className="qualification-page">
             <h1>Специалисты</h1>
+            <input
+                type="text"
+                placeholder="Поиск по специализации"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="search-input"
+            />
             <div className="qualification-list">
-                {qualifications.map(qualification => (
+                {filteredQualifications.map(qualification => (
                     <QualificationCard
                         key={qualification.slug}
                         qualification={qualification}

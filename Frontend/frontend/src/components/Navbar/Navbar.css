@@ -1,8 +1,11 @@
 :root {
     --navbar-height: 5%; /* Измените это значение на высоту вашего навбара */
+    --navbar-primary-color: #006768;
+    --navbar-hover-color: #007bff;
+    --dropdown-bg: #ffffff;
+    --dropdown-hover-bg: #f1f1f1;
+    --dropdown-shadow: rgba(0, 0, 0, 0.2);
 }
-
-
 
 .navbar {
     display: flex;
@@ -10,7 +13,7 @@
     align-items: center;
     padding: 20px;
     background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px var(--dropdown-shadow);
     position: fixed;
     width: 100%;
     z-index: 1000;
@@ -35,15 +38,13 @@
     text-decoration: none;
 }
 
-
 .logo-name {
     font-size: 30px;
     margin-left: 8px;
-    color: #006768;
+    color: var(--primary-color);
     text-decoration: none; /* Убираем подчеркивание */
     font-weight: bold;
 }
-
 
 .navbar-links {
     display: flex;
@@ -58,17 +59,60 @@
 }
 
 .navbar-links a:hover {
-    color: #007bff; /* Change to your desired hover color */
+    color: var(--navbar-hover-color); /* Change to your desired hover color */
 }
 
-.navbar-buttons{
-    margin-right: 6%; /* Добавляем отступ слева */
+.dropdown {
+    position: relative;
+    display: inline-block;
 }
-.navbar-buttons a {
-    color: #007bff;
+
+.dropdown .dropbtn {
+    color: #333;
     text-decoration: none;
     font-weight: bold;
-    border: 2px solid #007bff;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--dropdown-bg);
+    min-width: 200px;
+    box-shadow: 0 8px 16px 0 var(--dropdown-shadow);
+    z-index: 1;
+    border-radius: 4px; /* Add rounded corners */
+    overflow: hidden; /* Ensure children do not overflow the container */
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+}
+
+.dropdown-content a:hover {
+    background-color: var(--dropdown-hover-bg);
+    color: var(--navbar-hover-color);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.navbar-buttons {
+    margin-right: 6%; /* Добавляем отступ справа */
+}
+.navbar-buttons a {
+    color: var(--navbar-hover-color);
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid var(--navbar-hover-color);
     border-radius: 4px;
     padding: 8px 16px;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -80,16 +124,16 @@
 }
 
 .navbar-buttons a:hover {
-    background-color: #007bff;
+    background-color: var(--navbar-hover-color);
     color: white;
 }
 
 .logout-button {
-    color: #006768;
+    color: var(--primary-color);
     background-color: white;
     text-decoration: none;
     font-weight: bold;
-    border: 2px solid #006768;
+    border: 2px solid var(--primary-color);
     border-radius: 4px;
     padding: 8px 16px;
     transition: background-color 0.3s ease, color 0.3s ease;

@@ -73,7 +73,6 @@ class DoctorService:
         if Patient.objects.filter(id=user_id).exists():
             # Используем метод exists() для проверки наличия в избранном
             result = doctor.favorites.filter(id=user_id).exists()
-            print(result)
             return result
         return 'AnonymousUser'
 

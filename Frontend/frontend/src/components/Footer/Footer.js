@@ -12,6 +12,10 @@ const Footer = () => {
                         {localStorage.getItem('token') && <Link to="/meet">Расписание приемов</Link>}
                         {localStorage.getItem('token') && <Link to="/favorites">Избранное</Link>}
                     </div>
+                    <div className="footer-links">
+                        <a href="/qualifications">Подобрать доктора по специализации</a>
+                        <a href="/problems">Подобрать доктора по проблеме</a>
+                    </div>
                     <div className="footer-info">
                         <p>&copy; 2024 MedClose</p>
                         <p>Все права защищены</p>

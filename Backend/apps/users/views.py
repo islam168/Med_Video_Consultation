@@ -75,6 +75,12 @@ class QualificationListAPIView(ListAPIView):
     permission_classes = [AllowAny,]
 
 
+class ProblemListAPIView(ListAPIView):
+    queryset = Problem.objects.all()
+    serializer_class = ProblemSerializer
+    permission_classes = [AllowAny,]
+
+
 class HomePageAPIView(ListAPIView):
     serializer_class_problem = ProblemSerializer
     serializer_class_qualification = QualificationSerializer
@@ -120,7 +126,6 @@ class EvaluationRetrieveAPIView(RetrieveUpdateAPIView):
 
     def put(self, request, *args, **kwargs):
         result = DoctorService.create_update_evaluation(self.request)
-        print(request.data)
         if result:
             return result
         else:

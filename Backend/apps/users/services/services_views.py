@@ -57,14 +57,12 @@ class DoctorService:
                 instance = Evaluation.objects.get(id=data['id'])
                 serializer = EvaluationSerializer(instance, data=data)
             except Evaluation.DoesNotExist:
-                print(1)
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
             if serializer.is_valid():
                 serializer.save()
                 return Response(status=status.HTTP_200_OK)
             else:
-                print(2)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             if not Evaluation.objects.filter(doctor=data['doctor'], patient=data['patient']).exists():
@@ -73,10 +71,8 @@ class DoctorService:
                     serializer.save()
                     return Response(status=status.HTTP_201_CREATED)
                 else:
-                    print(3)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                print(4)
                 return Response('Evaluation already exists', status=status.HTTP_400_BAD_REQUEST)
 
 

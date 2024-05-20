@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './DoctorProfile.css';
 import ConfirmationPopup from './ConfirmationPopup';
+import ConfirmationAppointmentPopup from './ConfirmationAppointmentPopup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faHeartPulse, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
@@ -15,7 +16,9 @@ const DoctorProfile = () => {
     const [selectedTime, setSelectedTime] = useState("");
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState("");
+    const [reviewError, setReviewError] = useState(""); // New state for review error
     const [isFavorite, setIsFavorite] = useState(null); // New state for favorite status
+    const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('token') !== null);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -80,7 +83,15 @@ const DoctorProfile = () => {
     };
 
     const handleRatingChange = (e) => setRating(e.target.value);
-    const handleReviewChange = (e) => setReview(e.target.value);
+    const handleReviewChange = (e) => {
+        const newReview = e.target.value;
+        if (newReview.length > 500) {
+            setReviewError("Длина отзыва не должна превышать 500 символов");
+        } else {
+            setReviewError("");
+        }
+        setReview(newReview);
+    };
 
     const submitEvaluation = async () => {
         const token = localStorage.getItem('token');
@@ -89,6 +100,11 @@ const DoctorProfile = () => {
 
         if (!token || !userId) {
             console.error('User token or id not found in local storage');
+            return;
+        }
+
+        if (review.length > 500) {
+            setReviewError("Длина отзыва не должна превышать 500 символов");
             return;
         }
 
@@ -159,7 +175,6 @@ const DoctorProfile = () => {
             console.error('Error creating appointment:', error);
         }
     };
-
     const handleConfirmation = (date, time) => {
         setSelectedDate(date);
         setSelectedTime(time);
@@ -226,40 +241,41 @@ const DoctorProfile = () => {
                         <h2>Вы должны войти в систему, чтобы оставить отзыв.</h2>
                     ) : (
                         <>
-                        {doctorData.current_user_evaluation === "Patient does not have any appointment with this doctor" ? (
-                            <>
-                                <h2>Ваш отзыв</h2>
-                                <p>Вы не можете поставить оценку данному доктору, так как вы не пользовались его услугами ранее</p>
-                            </>
-                        ) : (
-                            <form onSubmit={submitEvaluation}>
-                                <h2>Ваш отзыв</h2>
-                                <label className="rating-label">Оценка:</label>
-                                <div className="rating-options">
-                                    {[1, 2, 3, 4, 5].map(option => (
-                                        <label key={option} className="rating-option">
-                                            <div className="option-container">
-                                                <input
-                                                    type="radio"
-                                                    name="rating"
-                                                    value={option}
-                                                    checked={parseInt(rating) === option}
-                                                    onChange={handleRatingChange}
-                                                />
-                                                <span className="option-icon">
+                            {doctorData.current_user_evaluation === "Patient does not have any appointment with this doctor" ? (
+                                <>
+                                    <h2>Ваш отзыв</h2>
+                                    <p>Вы не можете поставить оценку данному доктору, так как вы не пользовались его услугами ранее</p>
+                                </>
+                            ) : (
+                                <form onSubmit={submitEvaluation}>
+                                    <h2>Ваш отзыв</h2>
+                                    <label className="rating-label">Оценка:</label>
+                                    <div className="rating-options">
+                                        {[1, 2, 3, 4, 5].map(option => (
+                                            <label key={option} className="rating-option">
+                                                <div className="option-container">
+                                                    <input
+                                                        type="radio"
+                                                        name="rating"
+                                                        value={option}
+                                                        checked={parseInt(rating) === option}
+                                                        onChange={handleRatingChange}
+                                                    />
+                                                    <span className="option-icon">
                                                         {option} <FontAwesomeIcon icon={faHeartPulse} style={{ color: 'red' }} />
                                                 </span>
-                                            </div>
-                                        </label>
-                                    ))}
-                                </div>
-                                <label>
-                                    Отзыв:
-                                    <textarea value={review} onChange={handleReviewChange} />
-                                </label>
-                                <button type="submit">Отправить</button>
-                            </form>
-                        )}
+                                                </div>
+                                            </label>
+                                        ))}
+                                    </div>
+                                    <label>
+                                        Отзыв:
+                                        <textarea value={review} onChange={handleReviewChange} />
+                                    </label>
+                                    {reviewError && <p className="review-error-message">{reviewError}</p>}
+                                    <button type="submit">Отправить</button>
+                                </form>
+                            )}
                         </>
                     )}
                 </div>
@@ -273,7 +289,7 @@ const DoctorProfile = () => {
                             {doctorData.evaluations.map(evaluation => (
                                 <li key={evaluation.id}>
                                     <p><strong>Пользователь:</strong> {evaluation.patient}</p>
-                                    <p><strong>Оценка:</strong> {evaluation.rate}</p>
+                                    <p><strong>Оценка:</strong> {evaluation.rate} <FontAwesomeIcon icon={faHeartPulse} style={{ color: 'red' }} /></p>
                                     <p><strong>Отзыв:</strong> {evaluation.review ? evaluation.review : "Отзыв отсутствует"}</p>
                                 </li>
                             ))}
@@ -302,12 +318,20 @@ const DoctorProfile = () => {
                 )}
             </div>
 
+            {/* Other components */}
             {showConfirmation && (
-                <ConfirmationPopup
-                    message={`Вы уверены, что хотите записаться к врачу на ${selectedDate} в ${selectedTime}?`}
-                    confirmAction={confirmAppointment}
-                    cancelAction={cancelAppointment}
-                />
+                isAuthenticated ? (
+                    <ConfirmationPopup
+                        message={`Вы уверены, что хотите записаться к врачу прием на ${selectedDate} в ${selectedTime}?`}
+                        confirmAction={confirmAppointment}
+                        cancelAction={cancelAppointment}
+                    />
+                ) : (
+                    <ConfirmationAppointmentPopup
+                        message={`Пожалуйста, авторизуйтесь, чтобы записаться к врачу на прием`}
+                        cancelAction={cancelAppointment}
+                    />
+                )
             )}
         </div>
     );

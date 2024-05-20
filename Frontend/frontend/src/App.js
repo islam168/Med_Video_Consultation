@@ -6,6 +6,7 @@ import CreateDoctorInfoCard from "./pages/DoctorPages/CreateDoctorInfoCard";
 import UpdateDoctorForm from "./pages/DoctorPages/UpdateDoctorForm";
 import DoctorProfile from "./pages/DoctorPages/DoctorProfile";
 import QualificationPage from "./pages/DoctorPages/QualificationPage";
+import ProblemPage from "./pages/DoctorPages/ProblemPage";
 import DoctorListPage from "./pages/DoctorPages/DoctorListPage";
 import FavoritesPage from "./pages/DoctorPages/FavoritesPage";
 import HomePage from "./pages/HomePage";
@@ -44,6 +45,7 @@ function App() {
                         <Route path="/doctor/:id" element={<DoctorProfile />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/qualifications" element={<QualificationPage />} />
+                        <Route path="/problems" element={<ProblemPage />} />
                         <Route path="/doctors" element={<DoctorListPage />} />
                         <Route path="/favorites" element={<FavoritesPage />} />
                         <Route path="/meet" element={<Meet />} />

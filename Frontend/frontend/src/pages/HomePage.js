@@ -18,6 +18,7 @@ function HomePage() {
                 return response.json();
             })
             .then((data) => {
+                console.log(data.Problems)
                 setProblems(data.Problems);
                 setQualifications(data.Qualification);
             })
@@ -32,7 +33,7 @@ function HomePage() {
                 .then(response => response.json())
                 .then(data => {
                     setDoctors(data);
-                    window.location.href = `/doctors/?problem=${item.slug}&problemName=${item.name}`;
+                    window.location.href = `/doctors/?problem=${item.slug}`;
                 })
                 .catch(error => console.error('Error fetching doctors with problem:', error));
         } else {
@@ -46,7 +47,7 @@ function HomePage() {
                 .then(response => response.json())
                 .then(data => {
                     setDoctors(data);
-                    window.location.href = `/doctors/?qualification=${item.slug}&qualificationName=${item.name}`;
+                    window.location.href = `/doctors/?qualification=${item.slug}`;
                 })
                 .catch(error => console.error('Error fetching doctors with qualification:', error));
         } else {

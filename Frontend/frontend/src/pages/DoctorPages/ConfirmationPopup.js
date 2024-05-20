@@ -7,8 +7,8 @@ const ConfirmationPopup = ({ message, confirmAction, cancelAction }) => {
             <div className="confirmation-popup-inner">
                 <p>{message}</p>
                 <div className="confirmation-popup-buttons">
-                    <button className="confirmation-popup-cancel" onClick={confirmAction}>Подтвердить</button>
-                    <button className="confirmation-popup-confirm" onClick={cancelAction}>Отмена</button>
+                    <button className="confirmation-popup-confirm" onClick={confirmAction}>Подтвердить</button>
+                    <button className="confirmation-popup-cancel" onClick={cancelAction}>Отмена</button>
                 </div>
             </div>
         </div>

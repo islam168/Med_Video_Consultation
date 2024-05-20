@@ -33,10 +33,10 @@
     transition: background-color 0.3s;
 }
 
-.confirmation-popup-cancel:hover {
+.confirmation-popup-confirm:hover {
     background-color: #068466;
 }
 
-.confirmation-popup-confirm:hover {
+.confirmation-popup-cancel:hover {
     background-color: #ec0f0f;
 }

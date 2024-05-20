@@ -26,8 +26,7 @@ const DoctorListCard = ({ doctor, onClick }) => {
 
 const DoctorListPage = () => {
     const [doctors, setDoctors] = useState([]);
-    const [qualificationName, setQualificationName] = useState('');
-    const [problemName, setProblemName] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchDoctorsData = async () => {
@@ -39,19 +38,17 @@ const DoctorListPage = () => {
 
                 if (qualificationSlug) {
                     apiUrl += `qualification=${qualificationSlug}`;
-                    const qualificationName = searchParams.get('qualificationName');
-                    setQualificationName(qualificationName);
                 } else if (problemSlug) {
                     apiUrl += `problem=${problemSlug}`;
-                    const problemName = searchParams.get('problemName');
-                    setProblemName(problemName);
                 }
 
                 const response = await fetch(apiUrl);
                 const data = await response.json();
                 setDoctors(data);
+                setIsLoading(false); // Data fetching complete, set isLoading to false
             } catch (error) {
                 console.error('Error fetching doctors:', error);
+                setIsLoading(false); // Set isLoading to false in case of error
             }
         };
 
@@ -64,16 +61,24 @@ const DoctorListPage = () => {
 
     return (
         <div className="doctor-list-page">
-            <h1 className="qualification-list-name">{qualificationName || problemName}</h1>
-            <div className="doctor-list">
-                {doctors.map(doctor => (
-                    <DoctorListCard
-                        key={doctor.id}
-                        doctor={doctor}
-                        onClick={handleCardClick}
-                    />
-                ))}
-            </div>
+            {isLoading ? (
+                <h1>Загрузка...</h1>
+            ) : doctors.length > 0 ? (
+                <>
+                    <h1 className="qualification-list-name">{doctors[0].qualification}</h1>
+                    <div className="doctor-list">
+                        {doctors.map(doctor => (
+                            <DoctorListCard
+                                key={doctor.id}
+                                doctor={doctor}
+                                onClick={handleCardClick}
+                            />
+                        ))}
+                    </div>
+                </>
+            ) : (
+                <h1>Нет доступных докторов на данный момент</h1>
+            )}
         </div>
     );
 };

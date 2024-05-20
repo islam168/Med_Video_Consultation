@@ -5,7 +5,7 @@ from apps.users.views import (RegistrationAPIView, MyTokenObtainPairView, Doctor
                               DoctorPageAPIView, DoctorListAPIView, QualificationListAPIView, HomePageAPIView,
                               LogoutView, CreateAppointmentAPIView, ValidateMeetingAPIView, GetMeteredDomainAPIView,
                               AppointmentAPIView, EvaluationCreateAPIView, EvaluationRetrieveAPIView,
-                              FavoritesRetrieveAPIView)
+                              FavoritesRetrieveAPIView, ProblemListAPIView)
 
 urlpatterns = [
     path('', HomePageAPIView.as_view(), name='home_page'),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('doctor/<int:id>/', DoctorPageAPIView.as_view(), name='doctor_page'),
     path('doctors/', DoctorListAPIView.as_view(), name='doctor_list'),
     path('qualifications/', QualificationListAPIView.as_view(), name='qualification_list'),
+    path('problems/', ProblemListAPIView.as_view(), name='problem_list'),
     path('appointment_list/', AppointmentAPIView.as_view(), name='appointment_list'),
     path('evaluation/', EvaluationCreateAPIView.as_view(), name='appointment_list'),
     path('evaluation/<int:id>/', EvaluationRetrieveAPIView.as_view(), name='appointment_list'),

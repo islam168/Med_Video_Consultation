@@ -18,10 +18,19 @@
     align-items: center;
 }
 
+.footer-links {
+    display: flex;
+    flex-direction: column; /* Располагаем ссылки в столбик */
+}
+
 .footer-links a {
     color: #fff;
     text-decoration: none;
-    margin-right: 20px;
+    margin-bottom: 10px; /* Добавляем отступ между ссылками */
+}
+
+.footer-links a:hover {
+    color: #1889ff;
 }
 
 .footer-info p {
