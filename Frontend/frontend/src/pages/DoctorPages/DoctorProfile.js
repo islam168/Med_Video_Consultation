@@ -4,7 +4,7 @@ import axios from 'axios';
 import './DoctorProfile.css';
 import ConfirmationPopup from './ConfirmationPopup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faHeartPulse} from '@fortawesome/free-solid-svg-icons';
+import {faHeartPulse, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
 
 
@@ -15,6 +15,7 @@ const DoctorProfile = () => {
     const [selectedTime, setSelectedTime] = useState("");
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState("");
+    const [isFavorite, setIsFavorite] = useState(null); // New state for favorite status
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -34,12 +35,49 @@ const DoctorProfile = () => {
                     setRating(rate);
                     setReview(review);
                 }
+
+                setIsFavorite(response.data.favorite);
             } catch (error) {
                 console.error('Error fetching doctor data:', error);
             }
         };
         fetchDoctorData();
     }, [id]);
+
+    const handleFavoriteClick = async () => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            alert('Пожалуйста, войдите в систему');
+            return;
+        }
+
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.user_id;
+
+        try {
+            let response;
+            if (isFavorite) {
+                response = await axios.delete(`http://127.0.0.1:8000/api/users/favorite/${userId}/`, {
+                    data: { doctor: doctorData.id },
+                    headers: {
+                        Authorization: `${token}`
+                    }
+                });
+                setIsFavorite(false);
+            } else {
+                response = await axios.put(`http://127.0.0.1:8000/api/users/favorite/${userId}/`, { doctor: doctorData.id }, {
+                    headers: {
+                        Authorization: `${token}`
+                    }
+                });
+                setIsFavorite(true);
+            }
+            console.log('Favorite status updated successfully:', response.data);
+        } catch (error) {
+            console.error('Error updating favorite status:', error);
+        }
+    };
 
     const handleRatingChange = (e) => setRating(e.target.value);
     const handleReviewChange = (e) => setReview(e.target.value);
@@ -150,9 +188,23 @@ const DoctorProfile = () => {
                     <img src={doctorData.doctor_photo} alt={`${doctorData.first_name} ${doctorData.last_name}`} className="doctor-photo" />
                     <div className="profile-info">
                         <h1>{`${doctorData.last_name} ${doctorData.first_name}${doctorData.middle_name ? ' ' + doctorData.middle_name : ''}`}</h1>
-                        <h6>Специализация: {doctorData.qualification}</h6>
+                        <h6 className="specialization">Специализация: {doctorData.qualification}</h6>
                         <h6 className="work-experience">Стаж работы: {doctorData.work_experience}</h6>
-                        <h6 className="docot-rating">Рейтинг: {doctorData.average_rating} <FontAwesomeIcon icon={faHeartPulse} style={{ color: 'red' }} /></h6>
+                        <h6 className="doctor-rating">{doctorData.average_rating !== null ? (
+                            <p className="average-rating">
+                                Рейтинг: {doctorData.average_rating} <FontAwesomeIcon icon={faHeartPulse} style={{ color: 'red' }} />
+                            </p>
+                        ) : (
+                            <p>Рейтинг: Отсуствует на данный момент</p>
+                        )}</h6>
+                        {/* Favorite button */}
+                        {isAnonymous ? (
+                            <p></p>
+                        ) : (
+                            <button onClick={handleFavoriteClick} className="favorite-button" data-title={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}>
+                                <FontAwesomeIcon icon={faHeart} style={{ color: isFavorite ? 'red' : 'gray' }} />
+                            </button>
+                        )}
                     </div>
                 </div>
                 <div className="doctor-card">

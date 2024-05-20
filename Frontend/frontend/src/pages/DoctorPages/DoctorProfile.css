@@ -17,7 +17,9 @@
 }
 .profile-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Align items to the top */
+    justify-content: space-between; /* Push the button to the right */
+    position: relative; /* Set position to relative */
 }
 
 .doctor-photo {
@@ -29,6 +31,13 @@
 
 .profile-info {
     flex-grow: 1;
+    margin-top: 4%;
+}
+
+.specialization,
+.experience,
+.rating {
+    margin-bottom: 10px; /* Добавьте отступ между каждым элементом */
 }
 
 .profile h1 {
@@ -45,6 +54,9 @@
     font-size: 16px;
 }
 
+.doctor-rating {
+    font-size: 16px;
+}
 /* Doctor Card Styles */
 .doctor-card {
     margin-top: 20px;
@@ -214,4 +226,43 @@
 .reviews {
     margin-bottom: 10px;
     margin-top: 20px;
+}
+
+
+.favorite-button {
+    margin: 3% 1.5% 0 0;
+    position: absolute; /* Position the button absolutely */
+    top: 0; /* Align to the top */
+    right: 0; /* Align to the right */
+    background: none; /* Remove background */
+    border: none; /* Remove border */
+    cursor: pointer;
+    font-size: 20px; /* Увеличьте размер кнопки по вашему усмотрению */
+}
+
+.favorite-button:hover {
+    transform: scale(1.1); /* Увеличение размера кнопки при наведении */
+}
+
+/* Add styles for the tooltip */
+.favorite-button::before {
+    content: attr(data-title); /* Display the data-title attribute content */
+    position: absolute; /* Position the tooltip */
+    top: 100%; /* Position it below the button */
+    left: 50%; /* Align it to the center of the button */
+    transform: translateX(-50%); /* Center it horizontally */
+    background-color: rgba(0, 0, 0, 0.8); /* Background color */
+    color: white; /* Text color */
+    padding: 5px 10px; /* Padding */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 12px; /* Font size */
+    visibility: hidden; /* Initially hidden */
+    opacity: 0; /* Initially transparent */
+    transition: visibility 0s, opacity 0.3s ease; /* Smooth transition */
+}
+
+/* Show the tooltip on hover */
+.favorite-button:hover::before {
+    visibility: visible; /* Show the tooltip */
+    opacity: 1; /* Make it fully visible */
 }

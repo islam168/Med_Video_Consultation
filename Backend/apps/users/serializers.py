@@ -57,11 +57,13 @@ class DoctorPageSerializer(serializers.ModelSerializer):
     evaluations = serializers.SerializerMethodField()
     current_user_evaluation = serializers.SerializerMethodField()
     date_time = serializers.SerializerMethodField()
+    favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Doctor
         fields = ['id', 'last_name', 'first_name', 'middle_name', 'qualification', 'work_experience',
-                  'doctor_photo', 'doctor_card', 'date_time', 'average_rating', 'evaluations', 'current_user_evaluation']
+                  'doctor_photo', 'doctor_card', 'date_time', 'average_rating', 'evaluations',
+                  'current_user_evaluation', 'favorite']
 
     def get_date_time(self, obj):
         return DoctorAppointmentTimeService.doctor_appointment_time(obj.id)
@@ -103,6 +105,10 @@ class DoctorPageSerializer(serializers.ModelSerializer):
         dop_info = DoctorService.doctor_work_experience(obj.id)
         return dop_info
 
+    def get_favorite(self, obj):
+        request_user = self.context['request'].user
+        return DoctorService.favorite(obj, request_user)
+
 
 class DoctorListSerializer(serializers.ModelSerializer):
     work_experience = serializers.SerializerMethodField()
@@ -141,3 +147,24 @@ class AppointmentSerializer(serializers.ModelSerializer):
         model = Appointment
         fields = ['doctor', 'patient', 'date', 'time', 'url']
 
+
+class FavoritesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Patient
+        fields = ['favorites']
+
+    def to_representation(self, instance):
+        if self.context['request'].method == 'GET':
+            # Получаем представление объекта Patient
+            representation = super().to_representation(instance)
+            # Извлекаем список id избранных докторов
+            favorite_ids = representation['favorites']
+            favorite_doctors = Doctor.objects.filter(id__in=favorite_ids)
+            serialized_favorites = DoctorListSerializer(instance=favorite_doctors, many=True).data
+            # Заменяем список идентификаторов на сериализованные данные о докторах
+            representation['favorites'] = serialized_favorites
+            # Возвращаем измененное представление Patient
+            return representation
+        else:
+            return super().to_representation(instance)

@@ -1,0 +1,103 @@
+/* FavoritesPage.css */
+
+:root {
+    --primary-color: #068466;
+    --secondary-color: #004d49;
+    --text-color: #171616;
+    --background-color: #fff;
+    --box-shadow-color: rgba(0, 0, 0, 0.3);
+    --rating-color: red;
+}
+
+.favorites-page {
+    max-width: 1000px;
+    margin: 5% auto 0;
+    padding: 30px;
+    background-color: var(--background-color);
+    box-shadow: 0 0 10px var(--box-shadow-color);
+    border-radius: 10px;
+}
+
+.favorites-title {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.favorites-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-gap: 2rem;
+    padding: 5px;
+    margin-bottom: 6%;
+    margin-top: 2.5%;
+    animation: slideInFromBottom 1.5s ease-in-out;
+}
+
+.favorites-card {
+    max-width: 1000px;
+    display: flex;
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.favorites-card:hover {
+    transform: translateY(-5px);
+}
+
+.favorites-photo-container {
+    flex: 0 0 30%;
+    padding: 1rem;
+}
+
+.favorites-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.favorites-info {
+    flex: 1;
+    padding: 1rem;
+    margin-top: 10px;
+}
+
+.favorites-work-experience {
+    color: var(--text-color);
+    margin-top: 0.5rem;
+}
+
+.favorites-info h3 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.average-rating {
+    color: var(--text-color);
+    margin-top: 0.5rem;
+}
+
+.average-rating .fa-heart-pulse {
+    color: var(--rating-color);
+}
+
+.no-rating {
+    color: var(--text-color);
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .favorites-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+

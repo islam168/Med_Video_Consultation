@@ -41,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Patient(User):
     middle_name = models.CharField(max_length=50, blank=True, verbose_name='Отчество')
     birthdate = models.DateField(verbose_name='Дата рождения')
+    favorites = models.ManyToManyField(to='Doctor', verbose_name='Избранное', related_name='favorites')
 
     class Meta:
         verbose_name = 'Пациент'

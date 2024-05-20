@@ -7,11 +7,13 @@ import UpdateDoctorForm from "./pages/DoctorPages/UpdateDoctorForm";
 import DoctorProfile from "./pages/DoctorPages/DoctorProfile";
 import QualificationPage from "./pages/DoctorPages/QualificationPage";
 import DoctorListPage from "./pages/DoctorPages/DoctorListPage";
+import FavoritesPage from "./pages/DoctorPages/FavoritesPage";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import NotFoundPage from "./components/Error/NotFoundPage";
 import Meet from "./pages/Appointment/Meet";
+
 
 function App() {
     const [pathname, setPathname] = useState('');
@@ -43,6 +45,7 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/qualifications" element={<QualificationPage />} />
                         <Route path="/doctors" element={<DoctorListPage />} />
+                        <Route path="/favorites" element={<FavoritesPage />} />
                         <Route path="/meet" element={<Meet />} />
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>

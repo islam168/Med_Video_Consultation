@@ -65,6 +65,18 @@ class DoctorService:
             return 'Patient does not have any appointment'
         return None
 
+    @staticmethod
+    def favorite(doctor, request_user):
+        user_id = request_user.id
+
+        # Проверяем, является ли пользователь пациентом и существует ли он
+        if Patient.objects.filter(id=user_id).exists():
+            # Используем метод exists() для проверки наличия в избранном
+            result = doctor.favorites.filter(id=user_id).exists()
+            print(result)
+            return result
+        return 'AnonymousUser'
+
 
 class DoctorAppointmentTimeService:
 

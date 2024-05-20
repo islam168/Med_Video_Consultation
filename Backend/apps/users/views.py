@@ -1,7 +1,7 @@
 import os
 import requests
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, \
-    ListCreateAPIView, UpdateAPIView
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,7 +12,7 @@ from apps.users.filters import DoctorFilter
 from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
-                                    ProblemSerializer, AppointmentSerializer, EvaluationSerializer)
+                                    ProblemSerializer, AppointmentSerializer, EvaluationSerializer, FavoritesSerializer)
 from apps.users.services.services_views import (RegistrationService, DoctorService, CreateAppointmentService,
                                                 AppointmentService)
 from core.permissions import IsDoctor, IsDoctorData
@@ -125,6 +125,33 @@ class EvaluationRetrieveAPIView(RetrieveUpdateAPIView):
             return result
         else:
             return result
+
+
+class FavoritesRetrieveAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = FavoritesSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+    queryset = Patient.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        patient = request.user.patient
+        doctor_id = request.data['doctor']
+        try:
+            doctor = Doctor.objects.get(id=doctor_id)
+            patient.favorites.add(doctor)
+            return Response({'message': 'Doctor added to favorites'}, status=status.HTTP_200_OK)
+        except Doctor.DoesNotExist:
+            return Response({'error': 'Doctor not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        patient = request.user.patient
+        doctor_id = request.data['doctor']
+        try:
+            doctor = Doctor.objects.get(id=doctor_id)
+            patient.favorites.remove(doctor)
+            return Response({'message': 'Doctor removed from favorites'}, status=status.HTTP_200_OK)
+        except Doctor.DoesNotExist:
+            return Response({'error': 'Doctor not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EvaluationCreateAPIView(ListCreateAPIView):

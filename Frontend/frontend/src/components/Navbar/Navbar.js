@@ -59,6 +59,7 @@ const Navbar = () => {
             <div className="navbar-links">
                 <Link to="/qualifications">Подобрать специалиста</Link>
                 {localStorage.getItem('token') && <Link to="/meet">Расписание приемов</Link>}
+                {localStorage.getItem('token') && <Link to="/favorites">Избранное</Link>}
             </div>
             <div className="navbar-buttons">
                 {localStorage.getItem('token') ? (

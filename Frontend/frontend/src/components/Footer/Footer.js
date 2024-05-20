@@ -1,7 +1,6 @@
-/* Update the Footer component */
-
 import React from "react";
-import "./Footer.css"; // Make sure to import the CSS file
+import "./Footer.css";
+import {Link} from "react-router-dom"; // Make sure to import the CSS file
 
 const Footer = () => {
     return (
@@ -10,7 +9,8 @@ const Footer = () => {
                 <div className="footer-content">
                     <div className="footer-links">
                         <a href="/">Главная страница</a>
-                        <a href="/meet">Расписание приемов</a>
+                        {localStorage.getItem('token') && <Link to="/meet">Расписание приемов</Link>}
+                        {localStorage.getItem('token') && <Link to="/favorites">Избранное</Link>}
                     </div>
                     <div className="footer-info">
                         <p>&copy; 2024 MedClose</p>
