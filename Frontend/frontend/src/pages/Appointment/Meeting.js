@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import VideoTag from './VideoTag';
 import classNames from "classnames";
 import './Meeting.css';
@@ -23,6 +23,77 @@ function Meeting({
                      cameraShared,
                      screenShared,
                  }) {
+    const [notes, setNotes] = useState("");
+    const [notesVisible, setNotesVisible] = useState(false);
+    const [saveStatus, setSaveStatus] = useState("");
+
+    useEffect(() => {
+        const loadNotes = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/users/note/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setNotes(data.note);
+                } else {
+                    console.error('Error loading notes:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error loading notes:', error);
+            }
+        };
+
+        loadNotes();
+    }, []);
+
+    useEffect(() => {
+        if (notesVisible) {
+            const autoSaveInterval = setInterval(handleSaveNotes, 5000); // Auto-save every 5 seconds
+            return () => clearInterval(autoSaveInterval);
+        }
+    }, [notesVisible, notes]);
+
+    const handleSaveNotes = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/users/note/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token}`,
+                },
+                body: JSON.stringify({ note: notes }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Notes saved:', data);
+                setSaveStatus('Notes saved successfully!');
+            } else {
+                throw new Error('Failed to save notes');
+            }
+        } catch (error) {
+            console.error('Error saving notes:', error);
+            setSaveStatus('Error saving notes');
+        } finally {
+            setTimeout(() => setSaveStatus(''), 3000); // Clear save status after 3 seconds
+        }
+    };
+
+    const handleOpenNotes = () => {
+        setNotesVisible(true);
+    };
+
+    const handleHideNotes = () => {
+        setNotesVisible(false);
+        handleSaveNotes();
+    };
+
     const userStreamMap = {};
     remoteTracks.forEach(trackItem => {
         if (!userStreamMap[trackItem.participantSessionId]) {
@@ -35,9 +106,7 @@ function Meeting({
         <div className="video-container">
             <div className="video">
                 {localVideoStream && cameraShared ? (
-                    <VideoTag
-                        srcObject={localVideoStream}
-                    />
+                    <VideoTag srcObject={localVideoStream} />
                 ) : (
                     <div className="camera-off">
                         <img src={cameraTurnOff} alt="Camera Off" />
@@ -50,7 +119,6 @@ function Meeting({
         </div>
     );
 
-
     const renderedOtherUsersVideos = onlineUsers.map(user => {
         if (user._id === meetingInfo.participantSessionId) {
             return null; // Skip self
@@ -60,14 +128,11 @@ function Meeting({
             const stream = new MediaStream();
             stream.addTrack(trackItem.track);
             return (
-                <VideoTag
-                    key={trackItem.streamId}
-                    srcObject={stream}
-                />
+                <VideoTag key={trackItem.streamId} srcObject={stream} />
             );
         });
 
-        const hasActiveVideo = videoTags && videoTags.length > 0; // Check if user has active video streams
+        const hasActiveVideo = videoTags && videoTags.length > 0;
 
         return (
             <div key={user._id} className="video-container">
@@ -86,7 +151,6 @@ function Meeting({
             </div>
         );
     });
-
 
     const getButtonClass = shared => classNames("meeting-btn", { "btn-primary": shared });
 
@@ -124,7 +188,24 @@ function Meeting({
                 >
                     <img src={endCallIcon} alt="End Call" className="icon" />
                 </button>
+                <button
+                    className="meeting-btn"
+                    onClick={notesVisible ? handleHideNotes : handleOpenNotes}
+                >
+                    {notesVisible ? 'Hide Notes' : 'Open Notes'}
+                </button>
             </div>
+            {notesVisible && (
+                <div className="notes-container">
+                    <textarea
+                        className="meeting-notes"
+                        placeholder="Ваши заметки..."
+                        value={notes}
+                        onChange={e => setNotes(e.target.value)}
+                    />
+                    <div className="save-status">{saveStatus}</div>
+                </div>
+            )}
         </div>
     );
 }
