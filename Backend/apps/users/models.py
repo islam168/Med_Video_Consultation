@@ -243,3 +243,14 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return f'{self.doctor} {self.patient.email}'
+
+
+class Note(models.Model):
+    note = models.TextField(verbose_name='Заметки')
+
+    class Meta:
+        verbose_name = 'Заметка'
+        verbose_name_plural = 'Заметки'
+
+    def __str__(self):
+        return f"{self.note}"

@@ -2,6 +2,8 @@ from datetime import timedelta
 from pathlib import Path
 import os
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -179,3 +181,11 @@ JET_THEMES = [
         'title': 'Green'
     },
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL")
+EMAIL_HOST_PASSWORD = os.environ.get("PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

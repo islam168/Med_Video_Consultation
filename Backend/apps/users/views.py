@@ -9,10 +9,11 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
-from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation
+from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation, Note
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
-                                    ProblemSerializer, AppointmentSerializer, EvaluationSerializer, FavoritesSerializer)
+                                    ProblemSerializer, AppointmentSerializer, EvaluationSerializer, FavoritesSerializer,
+                                    NoteSerializer)
 from apps.users.services.services_views import (RegistrationService, DoctorService, AppointmentService,
                                                 AppointmentService)
 from core.permissions import IsDoctor, IsDoctorData
@@ -20,6 +21,7 @@ from django_filters import rest_framework as filters
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class RegistrationAPIView(CreateAPIView):
     queryset = Patient.objects.all()
@@ -226,7 +228,6 @@ class DeleteAppointmentAPIView(DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         appointment_id = kwargs.get('id')
         result, message = AppointmentService.delete_appointment(request, appointment_id)
-        print(message)
         if message == 'You do not have permission to delete this appointment':
             return Response(message, status=status.HTTP_403_FORBIDDEN)
         elif result:
@@ -267,3 +268,17 @@ class GetMeteredDomainAPIView(RetrieveAPIView):
         METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
 
         return Response({"METERED_DOMAIN": METERED_DOMAIN}, status=status.HTTP_200_OK)
+
+
+class CreateNoteAPIView(CreateAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    permission_classes = [AllowAny, ]
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = NoteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

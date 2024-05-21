@@ -1,7 +1,5 @@
 from datetime import datetime
-
 from django.core.exceptions import ObjectDoesNotExist
-
 from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer, \
     EvaluationSerializer
@@ -10,6 +8,18 @@ import os
 import requests
 import random
 from rest_framework.response import Response
+from django.core.mail import send_mail
+
+
+def send_deletion_email(email, user_name, appointment, user_role):
+    subject = 'Отмена консультации'
+    message = (
+        f'Доброго времени суток 😊.\n\n'
+        f'{user_role} {user_name} отменил консультацию на {appointment.date} в {appointment.time.strftime("%H:%M")}.\n'
+        f'Просим прощения, за оказанные неудобства. Всего наилучшего!'
+    )
+
+    send_mail(subject, message, os.environ.get("EMAIL"), [email])
 
 
 class RegistrationService:
@@ -98,7 +108,7 @@ class AppointmentService:
         today = datetime.now().date()
 
         if is_patient:
-            appointment_list = Appointment.objects.filter(patient=user.id).order_by('date')
+            appointment_list = Appointment.objects.filter(patient=user.id).order_by('date', 'time')
 
             middle_name = user.middle_name
 
@@ -120,7 +130,7 @@ class AppointmentService:
                     future_appointment.append(appointment_data)
 
         else:
-            appointment_list = Appointment.objects.filter(doctor=user.id).order_by('date')
+            appointment_list = Appointment.objects.filter(doctor=user.id).order_by('date', 'time')
 
             middle_name = user.middle_name
 
@@ -192,36 +202,54 @@ class AppointmentService:
     @staticmethod
     def delete_appointment(request, appointment_id):
         user_id = request.user.id
+
+        # Проверка существования записи
         try:
-            if Patient.objects.get(id=user_id):
+            appointment = Appointment.objects.get(id=appointment_id)
+        except Appointment.DoesNotExist:
+            return False, 'Appointment does not exist'
 
-                try:
-                    appointment = Appointment.objects.get(id=appointment_id)
-                except Appointment.DoesNotExist:
-                    return False, 'Appointment does not exist'
-
-                if appointment.patient.id != user_id:
-                    return False, 'You do not have permission to delete this appointment'
-
-                date_today = datetime.now().date()
-                time_now = datetime.now().time()
-
-                # Удалять запись на прием можно, только если дата приема >= сегодняшней дате
-                if appointment.date >= date_today:
-                    if appointment.date == date_today:
-                        # Если дата прием == сегодня проверять время, чтобы между временем приема и
-                        # сейчас было минимум 60 минут, иначе нельзя отменить (удалить прием)
-                        appointment_time_in_minutes = appointment.time.hour * 60 + appointment.time.minute
-                        time_now_in_minutes = time_now.hour * 60 + time_now.minute
-                        time_between_time_now_and_appointment_time = appointment_time_in_minutes - time_now_in_minutes
-                        if time_between_time_now_and_appointment_time >= 60:
-                            appointment.delete()
-                            return True, 'Appointment deleted success'
-                        return False, 'Cancellation of appointment at least one hour before'
-                    else:
-                        # Если дата прием > сегодня время не важно
-                        appointment.delete()
-                        return True, 'Appointment deleted success'
-                return False, 'Appointment date is up'
+        # Проверка, является ли пользователь пациентом или доктором
+        try:
+            patient = Patient.objects.get(id=user_id)
+            email = appointment.doctor.email
+            user_name = f"{patient.last_name} {patient.first_name}"
+            middle_name = patient.middle_name
+            if middle_name:
+                user_name += f" {middle_name}"
+            user_role = 'Пациент'
         except Patient.DoesNotExist:
-            return False, 'Patient does not exist'
+            try:
+                doctor = Doctor.objects.get(id=user_id)
+                email = appointment.patient.email
+                user_name = f"{doctor.last_name} {doctor.first_name}"
+                middle_name = doctor.middle_name
+                if middle_name:
+                    user_name += f" {middle_name}"
+                user_role = 'Доктор'
+            except Doctor.DoesNotExist:
+                return False, 'User does not exist'
+
+        date_today = datetime.now().date()
+        time_now = datetime.now().time()
+
+        # Удалять запись на прием можно, только если дата приема >= сегодняшней дате
+        if appointment.date >= date_today:
+            if appointment.date == date_today:
+                # Если дата прием == сегодня проверять время, чтобы между временем приема и
+                # сейчас было минимум 60 минут, иначе нельзя отменить (удалить прием)
+                appointment_time_in_minutes = appointment.time.hour * 60 + appointment.time.minute
+                time_now_in_minutes = time_now.hour * 60 + time_now.minute
+                time_between_time_now_and_appointment_time = appointment_time_in_minutes - time_now_in_minutes
+                if time_between_time_now_and_appointment_time >= 60:
+                    appointment.delete()
+                    send_deletion_email(email, user_name, appointment, user_role)
+                    return True, 'Appointment deleted success'
+                return False, 'Cancellation of appointment at least one hour before'
+            else:
+                # Если дата прием > сегодня время не важно
+                appointment.delete()
+                send_deletion_email(email, user_name, appointment, user_role)
+                return True, 'Appointment deleted success'
+        return False, 'Appointment date is up'
+
