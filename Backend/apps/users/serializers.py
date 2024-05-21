@@ -145,7 +145,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = ['doctor', 'patient', 'date', 'time', 'url']
+        fields = ['id', 'doctor', 'patient', 'date', 'time', 'url']
 
 
 class FavoritesSerializer(serializers.ModelSerializer):

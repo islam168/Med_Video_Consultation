@@ -1,7 +1,7 @@
 import os
 import requests
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, \
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,7 +13,7 @@ from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Proble
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
                                     ProblemSerializer, AppointmentSerializer, EvaluationSerializer, FavoritesSerializer)
-from apps.users.services.services_views import (RegistrationService, DoctorService, CreateAppointmentService,
+from apps.users.services.services_views import (RegistrationService, DoctorService, AppointmentService,
                                                 AppointmentService)
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
@@ -54,7 +54,7 @@ class DoctorCreateCardAPIView(CreateAPIView):
 
 
 # Обновление информационной карточки доктора
-class DoctorCardAPIView(RetrieveUpdateAPIView):
+class DoctorCardRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     queryset = DoctorCard.objects.all()
     serializer_class = DoctorCardSerializer
     permission_classes = [IsDoctorData,]
@@ -106,7 +106,7 @@ class HomePageAPIView(ListAPIView):
 
 
 # Страница доктора
-class DoctorPageAPIView(RetrieveAPIView):
+class DoctorPageRetrieveAPIView(RetrieveAPIView):
     serializer_class = DoctorPageSerializer
     permission_classes = [AllowAny]
     lookup_field = 'id'
@@ -118,7 +118,7 @@ class DoctorPageAPIView(RetrieveAPIView):
         return Response(serializer.data)
 
 
-class EvaluationRetrieveAPIView(RetrieveUpdateAPIView):
+class EvaluationRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = EvaluationSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
@@ -132,7 +132,7 @@ class EvaluationRetrieveAPIView(RetrieveUpdateAPIView):
             return result
 
 
-class FavoritesRetrieveAPIView(RetrieveUpdateDestroyAPIView):
+class FavoritesRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = FavoritesSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
@@ -159,7 +159,7 @@ class FavoritesRetrieveAPIView(RetrieveUpdateDestroyAPIView):
             return Response({'error': 'Doctor not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EvaluationCreateAPIView(ListCreateAPIView):
+class EvaluationListCreateAPIView(ListCreateAPIView):
     queryset = Evaluation.objects.all()
     serializer_class = EvaluationSerializer
     permission_classes = [IsAuthenticated]
@@ -172,7 +172,7 @@ class EvaluationCreateAPIView(ListCreateAPIView):
             return result
 
 
-class AppointmentAPIView(ListAPIView):
+class AppointmentListAPIView(ListAPIView):
     serializer_class = AppointmentSerializer
     permission_classes = [AllowAny]
     queryset = Appointment.objects.all()
@@ -207,14 +207,32 @@ class LogoutView(APIView):
 class CreateAppointmentAPIView(CreateAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAuthenticated, ]
 
     def post(self, request, *args, **kwargs):
-        result = CreateAppointmentService.create_appointment(request.data)
+        result = AppointmentService.create_appointment(request.data)
         if result:
             return Response('Success', status=status.HTTP_200_OK)
         else:
             return Response('Error', status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteAppointmentAPIView(DestroyAPIView):
+    serializer_class = AppointmentSerializer
+    permission_classes = [IsAuthenticated, ]
+    lookup_field = 'id'
+    queryset = Appointment.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        appointment_id = kwargs.get('id')
+        result, message = AppointmentService.delete_appointment(request, appointment_id)
+        print(message)
+        if message == 'You do not have permission to delete this appointment':
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
+        elif result:
+            return Response(message, status=status.HTTP_200_OK)
+        else:
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ValidateMeetingAPIView(RetrieveAPIView):

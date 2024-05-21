@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Register from "./pages/LoginRegistration/RegistrationForm";
 import Login from "./pages/LoginRegistration/Login";
@@ -15,27 +15,17 @@ import Footer from "./components/Footer/Footer";
 import NotFoundPage from "./components/Error/NotFoundPage";
 import Meet from "./pages/Appointment/Meet";
 
-
 function App() {
-    const [pathname, setPathname] = useState('');
+    const [showNavFooter, setShowNavFooter] = useState(true);
 
-    useEffect(() => {
-        const onLocationChange = () => {
-            setPathname(window.location.pathname);
-        };
-
-        onLocationChange();
-        window.addEventListener('popstate', onLocationChange);
-
-        return () => {
-            window.removeEventListener('popstate', onLocationChange);
-        };
-    }, []);
+    const updateNavFooterVisibility = (show) => {
+        setShowNavFooter(show);
+    };
 
     return (
         <BrowserRouter>
             <div className="app-container">
-                {pathname !== "/meet" && <Navbar />}
+                {showNavFooter && <Navbar />}
                 <div className="content">
                     <Routes>
                         <Route path="/" element={<HomePage />} />
@@ -48,11 +38,11 @@ function App() {
                         <Route path="/problems" element={<ProblemPage />} />
                         <Route path="/doctors" element={<DoctorListPage />} />
                         <Route path="/favorites" element={<FavoritesPage />} />
-                        <Route path="/meet" element={<Meet />} />
+                        <Route path="/meet" element={<Meet updateNavFooterVisibility={updateNavFooterVisibility} />} />
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                 </div>
-                {pathname !== "/meet" && <Footer />}
+                {showNavFooter && <Footer />}
             </div>
         </BrowserRouter>
     );

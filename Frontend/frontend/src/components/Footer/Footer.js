@@ -14,7 +14,7 @@ const Footer = () => {
                     </div>
                     <div className="footer-links">
                         <a href="/qualifications">Подобрать доктора по специализации</a>
-                        <a href="/problems">Подобрать доктора по проблеме</a>
+                        <a href="/problems">Подобрать доктора по проблеме со здороьем</a>
                     </div>
                     <div className="footer-info">
                         <p>&copy; 2024 MedClose</p>

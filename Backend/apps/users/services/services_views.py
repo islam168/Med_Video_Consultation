@@ -76,43 +76,6 @@ class DoctorService:
                 return Response('Evaluation already exists', status=status.HTTP_400_BAD_REQUEST)
 
 
-class CreateAppointmentService:
-    @staticmethod
-    def create_appointment(data):
-        doctor = data['doctor']
-        patient = data['patient']
-
-        try:
-            Doctor.objects.get(id=doctor)
-        except ObjectDoesNotExist:
-            return "Doctor not found"
-
-        try:
-            Patient.objects.get(id=patient)
-        except ObjectDoesNotExist:
-            return "Patient not found"
-
-        METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
-        METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
-
-        roomID = random.randint(101234554312, 998765432156)
-
-        url = f"https://{METERED_DOMAIN}/api/v1/room?secretKey={METERED_SECRET_KEY}"
-        payload = {
-            "roomName": roomID,
-        }
-        r = requests.post(url, data=payload)
-
-        if r.status_code == status.HTTP_200_OK:
-            data['url'] = roomID  # url-адрес видео конференции приема
-            serializer = AppointmentSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-            return True
-        else:
-            return False
-
-
 class AppointmentService:
     @staticmethod
     def appointment_list(request_user):
@@ -190,3 +153,75 @@ class AppointmentService:
         }
 
         return result
+
+    @staticmethod
+    def create_appointment(data):
+        doctor = data['doctor']
+        patient = data['patient']
+
+        try:
+            Doctor.objects.get(id=doctor)
+        except ObjectDoesNotExist:
+            return "Doctor not found"
+
+        try:
+            Patient.objects.get(id=patient)
+        except ObjectDoesNotExist:
+            return "Patient not found"
+
+        METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
+        METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
+
+        roomID = random.randint(101234554312, 998765432156)
+
+        url = f"https://{METERED_DOMAIN}/api/v1/room?secretKey={METERED_SECRET_KEY}"
+        payload = {
+            "roomName": roomID,
+        }
+        r = requests.post(url, data=payload)
+
+        if r.status_code == status.HTTP_200_OK:
+            data['url'] = roomID  # url-адрес видео конференции приема
+            serializer = AppointmentSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def delete_appointment(request, appointment_id):
+        user_id = request.user.id
+        try:
+            if Patient.objects.get(id=user_id):
+
+                try:
+                    appointment = Appointment.objects.get(id=appointment_id)
+                except Appointment.DoesNotExist:
+                    return False, 'Appointment does not exist'
+
+                if appointment.patient.id != user_id:
+                    return False, 'You do not have permission to delete this appointment'
+
+                date_today = datetime.now().date()
+                time_now = datetime.now().time()
+
+                # Удалять запись на прием можно, только если дата приема >= сегодняшней дате
+                if appointment.date >= date_today:
+                    if appointment.date == date_today:
+                        # Если дата прием == сегодня проверять время, чтобы между временем приема и
+                        # сейчас было минимум 60 минут, иначе нельзя отменить (удалить прием)
+                        appointment_time_in_minutes = appointment.time.hour * 60 + appointment.time.minute
+                        time_now_in_minutes = time_now.hour * 60 + time_now.minute
+                        time_between_time_now_and_appointment_time = appointment_time_in_minutes - time_now_in_minutes
+                        if time_between_time_now_and_appointment_time >= 60:
+                            appointment.delete()
+                            return True, 'Appointment deleted success'
+                        return False, 'Cancellation of appointment at least one hour before'
+                    else:
+                        # Если дата прием > сегодня время не важно
+                        appointment.delete()
+                        return True, 'Appointment deleted success'
+                return False, 'Appointment date is up'
+        except Patient.DoesNotExist:
+            return False, 'Patient does not exist'

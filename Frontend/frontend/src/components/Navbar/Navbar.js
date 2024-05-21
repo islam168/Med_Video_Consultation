@@ -67,7 +67,7 @@ const Navbar = () => {
                     {showDropdown && (
                         <div className="dropdown-content">
                             <Link to="/qualifications">По специализации</Link>
-                            <Link to="/problems">По проблеме</Link>
+                            <Link to="/problems">По проблеме со здоровьем</Link>
                         </div>
                     )}
                 </div>

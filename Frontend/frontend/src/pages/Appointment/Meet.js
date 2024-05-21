@@ -4,31 +4,21 @@ import Appointment from "./Appointment";
 import Meeting from "./Meeting";
 import MeetingEnded from "./MeetingEnded";
 
-// Initializing the SDK
 const meteredMeeting = new window.Metered.Meeting();
 
-function Meet() {
-    // Will set it to true when the user joins the meeting
-    // and update the UI.
+function Meet({ updateNavFooterVisibility }) {
     const [meetingJoined, setMeetingJoined] = useState(false);
-    // Storing onlineUsers, updating this when a user joins
-    // or leaves the meeting
     const [onlineUsers, setOnlineUsers] = useState([]);
-
     const [remoteTracks, setRemoteTracks] = useState([]);
-
     const [username, setUsername] = useState("");
-
     const [localVideoStream, setLocalVideoStream] = useState(null);
-
     const [micShared, setMicShared] = useState(false);
     const [cameraShared, setCameraShared] = useState(false);
     const [screenShared, setScreenShared] = useState(false);
     const [meetingEnded, setMeetingEnded] = useState(false);
     const [roomName, setRoomName] = useState(null);
     const [meetingInfo, setMeetingInfo] = useState({});
-    // This useEffect hooks will contain all
-    // event handler, like participantJoined, participantLeft etc.
+
     useEffect(() => {
         meteredMeeting.on("remoteTrackStarted", (trackItem) => {
             remoteTracks.push(trackItem);
@@ -65,27 +55,18 @@ function Meet() {
             meteredMeeting.removeListener("onlineParticipants");
             meteredMeeting.removeListener("localTrackUpdated");
         };
-    });
+    }, [remoteTracks]);
 
-
-    // Will call th API to validate the room
-    // and join the user
-    async function handleJoinMeeting(roomName, username) {
+    const handleJoinMeeting = async (roomName, username) => {
         roomName = roomName.trim();
-        // Calling API to validate the roomName
         const response = await axios.get(
             "http://localhost:8000/api/users/validate-meeting?roomName=" + roomName
         );
 
         if (response.data.roomFound) {
-            // Calling API to fetch Metered Domain
             const { data } = await axios.get("http://localhost:8000/api/users/metered-domain");
-
-            // Extracting Metered Domain and Room Name
-            // From responses.
             const METERED_DOMAIN = data.METERED_DOMAIN;
 
-            // Calling the join() of Metered SDK
             const joinResponse = await meteredMeeting.join({
                 name: username,
                 roomURL: METERED_DOMAIN + "/" + roomName,
@@ -94,14 +75,14 @@ function Meet() {
             setUsername(username);
             setRoomName(roomName);
             setMeetingInfo(joinResponse);
-
             setMeetingJoined(true);
+            updateNavFooterVisibility(false);
         } else {
             alert("Invalid roomName");
         }
-    }
+    };
 
-    async function handleMicBtn() {
+    const handleMicBtn = async () => {
         if (micShared) {
             await meteredMeeting.stopAudio();
             setMicShared(false);
@@ -109,9 +90,9 @@ function Meet() {
             await meteredMeeting.startAudio();
             setMicShared(true);
         }
-    }
+    };
 
-    async function handleCameraBtn() {
+    const handleCameraBtn = async () => {
         if (cameraShared) {
             await meteredMeeting.stopVideo();
             setLocalVideoStream(null);
@@ -122,9 +103,9 @@ function Meet() {
             setLocalVideoStream(stream);
             setCameraShared(true);
         }
-    }
+    };
 
-    async function handleScreenBtn() {
+    const handleScreenBtn = async () => {
         if (!screenShared) {
             await meteredMeeting.startScreenShare();
             setScreenShared(false);
@@ -133,12 +114,13 @@ function Meet() {
             setCameraShared(false);
             setScreenShared(true);
         }
-    }
+    };
 
-    async function handleLeaveBtn() {
+    const handleLeaveBtn = async () => {
         await meteredMeeting.leaveMeeting();
         setMeetingEnded(true);
-    }
+        updateNavFooterVisibility(true);
+    };
 
     return (
         <div className="App">
@@ -163,9 +145,7 @@ function Meet() {
                     />
                 )
             ) : (
-                <Appointment
-                    handleJoinMeeting={handleJoinMeeting}
-                />
+                <Appointment handleJoinMeeting={handleJoinMeeting} />
             )}
         </div>
     );

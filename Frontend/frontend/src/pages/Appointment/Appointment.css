@@ -10,6 +10,11 @@
 
 .appointment-title {
     color: #068466;
+    text-align: center;
+}
+
+.appointment-container h1 {
+    font-weight: bold;
 }
 
 .appointment-list {
@@ -60,3 +65,22 @@
 .appointment-info a:hover {
     color: #007bff; /* Цвет ссылки при наведении */
 }
+
+
+.cancel-button {
+    background-color: #ff4c4c;
+    color: white;
+    transition: background-color 0.3s ease;
+    margin-left: 2%;
+}
+
+.cancel-button:hover {
+    background-color: #ff1c1c;
+}
+
+.error-message {
+    color: #ff1c1c;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
