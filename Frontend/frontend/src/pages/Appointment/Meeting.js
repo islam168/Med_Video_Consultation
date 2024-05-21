@@ -7,6 +7,7 @@ import microphoneIcon from '../../media_photo/microphone-svgrepo-com.png';
 import screenMirrorIcon from '../../media_photo/screen-mirror-svgrepo-com.png';
 import videoCameraIcon from '../../media_photo/video-camera-svgrepo-com.png';
 import cameraTurnOff from '../../media_photo/cameraTurnOff.png';
+import createNote from '../../media_photo/create-note.png';
 
 function Meeting({
                      handleMicBtn,
@@ -54,7 +55,7 @@ function Meeting({
 
     useEffect(() => {
         if (notesVisible) {
-            const autoSaveInterval = setInterval(handleSaveNotes, 5000); // Auto-save every 5 seconds
+            const autoSaveInterval = setInterval(handleSaveNotes, 60000); // Auto-save every minute
             return () => clearInterval(autoSaveInterval);
         }
     }, [notesVisible, notes]);
@@ -182,6 +183,7 @@ function Meeting({
                 >
                     <img src={screenMirrorIcon} alt="Screen" className="icon" />
                 </button>
+
                 <button
                     className="meeting-btn end-call"
                     onClick={handleLeaveBtn}
@@ -192,7 +194,7 @@ function Meeting({
                     className="meeting-btn"
                     onClick={notesVisible ? handleHideNotes : handleOpenNotes}
                 >
-                    {notesVisible ? 'Hide Notes' : 'Open Notes'}
+                    {notesVisible ? <img src={createNote} alt="Microphone" className="icon" /> : <img src={createNote} alt="Microphone" className="icon" />}
                 </button>
             </div>
             <div className={`notes-container ${notesVisible ? 'open' : ''}`}>
@@ -205,18 +207,20 @@ function Meeting({
                             onChange={e => setNotes(e.target.value)}
                         />
                         <div className="save-status">{saveStatus}</div>
-                        <button
-                            className="meeting-btn save-notes"
-                            onClick={handleSaveNotes}
-                        >
-                            Save Notes
-                        </button>
-                        <button
-                            className="meeting-btn hide-notes"
-                            onClick={handleHideNotes}
-                        >
-                            Hide Notes
-                        </button>
+                        <div className="save-btn-container">
+                            <button
+                                className="meeting-btn save-notes"
+                                onClick={handleSaveNotes}
+                            >
+                                Сохранить заметки
+                            </button>
+                            <button
+                                className="meeting-btn hide-notes"
+                                onClick={handleHideNotes}
+                            >
+                                Закрыть заметки
+                            </button>
+                        </div>
                     </>
                 )}
             </div>

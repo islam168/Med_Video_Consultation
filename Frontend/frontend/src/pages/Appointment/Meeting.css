@@ -1,5 +1,4 @@
-/*Meeting.css*/
-
+/* Meeting container and general styles */
 .meeting-container {
     display: flex;
     flex-direction: column;
@@ -33,7 +32,7 @@
     max-width: 740px;
     height: auto;
     max-height: 100%;
-    object-fit: contain; /* or use 'cover' depending on your preference */
+    object-fit: contain;
     border-radius: 8px;
     overflow: hidden;
 }
@@ -84,11 +83,11 @@
     background-color: #000 !important;
 }
 
-.end-call:hover  {
+.end-call:hover {
     background-color: #c20000;
 }
 
-.text-center{
+.text-center {
     text-align: center !important;
 }
 
@@ -105,15 +104,14 @@
     max-height: 100%;
 }
 
-
 /* Notes container styles */
 .notes-container {
     position: fixed;
     bottom: -100%; /* Start hidden below the viewport */
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
     max-width: 800px;
-    margin: 0 auto;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow to the notes section */
     border-radius: 10px 10px 0 0; /* Rounded top corners */
@@ -140,10 +138,17 @@
     margin-top: 10px;
     font-size: 14px;
     color: green;
+    text-align: center;
+}
+
+.save-btn-container {
+    display: flex;
+    justify-content: space-between;
 }
 
 .meeting-btn.save-notes,
 .meeting-btn.hide-notes {
+    width: calc(50% - 5px); /* Чтобы учесть отступ между кнопками */
     background-color: #068466;
     color: #fff;
     border: none;
