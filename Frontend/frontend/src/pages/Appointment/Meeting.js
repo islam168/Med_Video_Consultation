@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import VideoTag from './VideoTag';
 import classNames from "classnames";
 import './Meeting.css';
@@ -195,17 +195,31 @@ function Meeting({
                     {notesVisible ? 'Hide Notes' : 'Open Notes'}
                 </button>
             </div>
-            {notesVisible && (
-                <div className="notes-container">
-                    <textarea
-                        className="meeting-notes"
-                        placeholder="Ваши заметки..."
-                        value={notes}
-                        onChange={e => setNotes(e.target.value)}
-                    />
-                    <div className="save-status">{saveStatus}</div>
-                </div>
-            )}
+            <div className={`notes-container ${notesVisible ? 'open' : ''}`}>
+                {notesVisible && (
+                    <>
+                        <textarea
+                            className="meeting-notes"
+                            placeholder="Ваши заметки..."
+                            value={notes}
+                            onChange={e => setNotes(e.target.value)}
+                        />
+                        <div className="save-status">{saveStatus}</div>
+                        <button
+                            className="meeting-btn save-notes"
+                            onClick={handleSaveNotes}
+                        >
+                            Save Notes
+                        </button>
+                        <button
+                            className="meeting-btn hide-notes"
+                            onClick={handleHideNotes}
+                        >
+                            Hide Notes
+                        </button>
+                    </>
+                )}
+            </div>
         </div>
     );
 }

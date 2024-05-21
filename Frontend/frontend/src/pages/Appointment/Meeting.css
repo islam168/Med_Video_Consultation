@@ -106,3 +106,55 @@
 }
 
 
+/* Notes container styles */
+.notes-container {
+    position: fixed;
+    bottom: -100%; /* Start hidden below the viewport */
+    left: 0;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow to the notes section */
+    border-radius: 10px 10px 0 0; /* Rounded top corners */
+    padding: 30px;
+    transition: bottom 0.3s ease-in-out; /* Smooth transition */
+    z-index: 1000; /* Ensure it appears above other content */
+}
+
+.notes-container.open {
+    bottom: 0; /* Slide into view */
+}
+
+.meeting-notes {
+    width: 100%;
+    height: 200px; /* Bigger notes area */
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #ccc; /* Border around the textarea */
+    font-size: 16px; /* Bigger text */
+    resize: none; /* Disable resizing */
+}
+
+.save-status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: green;
+}
+
+.meeting-btn.save-notes,
+.meeting-btn.hide-notes {
+    background-color: #068466;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.meeting-btn.save-notes:hover,
+.meeting-btn.hide-notes:hover {
+    background-color: #004d49;
+}
