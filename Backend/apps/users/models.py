@@ -197,8 +197,8 @@ class Appointment(models.Model):
         on_delete=models.CASCADE,
         related_name='appointment',
     )
-    time = models.TimeField(verbose_name='Дата')
-    date = models.DateField(verbose_name='Время')
+    time = models.TimeField(verbose_name='Время')
+    date = models.DateField(verbose_name='Дата')
     url = models.CharField(max_length=20, unique=True, default='')
 
     class Meta:

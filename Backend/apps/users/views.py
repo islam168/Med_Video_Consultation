@@ -14,8 +14,7 @@ from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSe
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
                                     ProblemSerializer, AppointmentSerializer, EvaluationSerializer, FavoritesSerializer,
                                     NoteSerializer)
-from apps.users.services.services_views import (RegistrationService, DoctorService, AppointmentService,
-                                                AppointmentService)
+from apps.users.services.services_views import (RegistrationService, DoctorService, AppointmentService)
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
 import logging
@@ -187,10 +186,10 @@ class AppointmentListAPIView(ListAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class LogoutView(APIView):
+class LogoutView(ListCreateAPIView):
     permission_classes = [IsAuthenticated,]
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         # print("Request headers:", request.headers)
         # print("Request body:", request.body)
         # return Response(status=status.HTTP_400_BAD_REQUEST)

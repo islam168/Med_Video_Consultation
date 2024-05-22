@@ -32,12 +32,14 @@ function Meeting({
     const [noteId, setNoteId] = useState(null);
     const [appointmentId, setAppointmentId] = useState(null);
     const [isNoteCreated, setIsNoteCreated] = useState(false);
+    const [isPatient, setIsPatient] = useState(false); // New state for isPatient
+
 
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         const decodedToken = jwtDecode(token);
-        const isPatient = decodedToken.is_patient;
+        setIsPatient(decodedToken.is_patient); // Set isPatient state
 
         const loadNotes = async () => {
             const token = localStorage.getItem('token');
@@ -218,12 +220,14 @@ function Meeting({
                 >
                     <img src={screenMirrorIcon} alt="Screen" className="icon" />
                 </button>*/}
-                <button
-                    className="meeting-btn"
-                    onClick={notesVisible ? handleHideNotes : handleOpenNotes}
-                >
-                    {notesVisible ? <img src={saveNote} alt="Save Note" className="icon" /> : <img src={createNote} alt="Create Note" className="icon" />}
-                </button>
+                {!isPatient && ( // Only render if not a patient
+                    <button
+                        className="meeting-btn"
+                        onClick={notesVisible ? handleHideNotes : handleOpenNotes}
+                    >
+                        {notesVisible ? <img src={saveNote} alt="Save Note" className="icon" /> : <img src={createNote} alt="Create Note" className="icon" />}
+                    </button>
+                )}
 
                 <button
                     className="meeting-btn end-call"

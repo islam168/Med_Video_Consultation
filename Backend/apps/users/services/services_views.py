@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation, Note
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer, \
-    EvaluationSerializer, NoteSerializer
+    EvaluationSerializer
 from rest_framework import status
 import os
 import requests
@@ -113,11 +114,29 @@ class AppointmentService:
                     'date': date,
                     'time': time,
                 }
-                if appointment.date < today:
+
+                appointment_date = appointment.date
+
+                if appointment_date < today:
                     past_appointment.append(appointment_data)
                 else:
-                    appointment_data['url'] = appointment.url
-                    future_appointment.append(appointment_data)
+                    if appointment_date == today:
+                        current_time = datetime.now()
+                        appointment_datetime = datetime.combine(appointment_date, appointment.time)
+
+                        # Вычисление разницы во времени
+                        time_difference = current_time - appointment_datetime
+
+                        # Проверка, что разница составляет 45 минут
+                        if abs(time_difference) > timedelta(minutes=45):
+                            past_appointment.append(appointment_data)
+                        else:
+                            appointment_data['url'] = appointment.url
+                            future_appointment.append(appointment_data)
+
+                    else:
+                        appointment_data['url'] = appointment.url
+                        future_appointment.append(appointment_data)
 
         else:
             appointment_list = Appointment.objects.filter(doctor=user.id).order_by('date', 'time')
@@ -135,11 +154,29 @@ class AppointmentService:
                     'date': date,
                     'time': time,
                 }
-                if appointment.date < today:
+
+                appointment_date = appointment.date
+
+                if appointment_date < today:
                     past_appointment.append(appointment_data)
                 else:
-                    appointment_data['url'] = appointment.url
-                    future_appointment.append(appointment_data)
+                    if appointment_date == today:
+                        current_time = datetime.now()
+                        appointment_datetime = datetime.combine(appointment_date, appointment.time)
+
+                        # Вычисление разницы во времени
+                        time_difference = current_time - appointment_datetime
+
+                        # Проверка, что разница составляет 45 минут
+                        if abs(time_difference) > timedelta(minutes=45):
+                            past_appointment.append(appointment_data)
+                        else:
+                            appointment_data['url'] = appointment.url
+                            future_appointment.append(appointment_data)
+
+                    else:
+                        appointment_data['url'] = appointment.url
+                        future_appointment.append(appointment_data)
 
         full_name = f'{request_user.last_name} {request_user.first_name}'
 
@@ -263,4 +300,3 @@ class AppointmentService:
             return True, note
         except Exception as e:
             return False, appointment_id
-
