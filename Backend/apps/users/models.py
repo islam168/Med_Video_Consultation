@@ -1,4 +1,3 @@
-from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -247,10 +246,17 @@ class Evaluation(models.Model):
 
 class Note(models.Model):
     note = models.TextField(verbose_name='Заметки')
+    appointment = models.OneToOneField(
+        on_delete=models.CASCADE,
+        related_name='note',
+        to='Appointment',
+        verbose_name='Запись на прием',
+        default=None
+    )
 
     class Meta:
         verbose_name = 'Заметка'
         verbose_name_plural = 'Заметки'
 
     def __str__(self):
-        return f"{self.note}"
+        return f"{self.id}, {self.note}, {self.appointment.id}"

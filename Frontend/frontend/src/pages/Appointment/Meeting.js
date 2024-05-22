@@ -8,6 +8,8 @@ import screenMirrorIcon from '../../media_photo/screen-mirror-svgrepo-com.png';
 import videoCameraIcon from '../../media_photo/video-camera-svgrepo-com.png';
 import cameraTurnOff from '../../media_photo/cameraTurnOff.png';
 import createNote from '../../media_photo/create-note.png';
+import saveNote from '../../media_photo/save-note.png';
+import {jwtDecode} from 'jwt-decode';
 
 function Meeting({
                      handleMicBtn,
@@ -27,12 +29,23 @@ function Meeting({
     const [notes, setNotes] = useState("");
     const [notesVisible, setNotesVisible] = useState(false);
     const [saveStatus, setSaveStatus] = useState("");
+    const [noteId, setNoteId] = useState(null);
+    const [appointmentId, setAppointmentId] = useState(null);
+    const [isNoteCreated, setIsNoteCreated] = useState(false);
+
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token);
+        const isPatient = decodedToken.is_patient;
+
         const loadNotes = async () => {
             const token = localStorage.getItem('token');
+            const params = new URLSearchParams({
+                meetingID: roomName,
+            });
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/users/note/', {
+                const response = await fetch(`http://127.0.0.1:8000/api/users/note/?${params}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -42,6 +55,13 @@ function Meeting({
                 if (response.ok) {
                     const data = await response.json();
                     setNotes(data.note);
+                    if (data.id) {
+                        setNoteId(data.id);
+                        setIsNoteCreated(true); // Устанавливаем в true, если заметка уже существует
+                        setAppointmentId(data.appointment);
+                    } else if (data.appointment_id) {
+                        setAppointmentId(data.appointment_id);
+                    }
                 } else {
                     console.error('Error loading notes:', response.statusText);
                 }
@@ -51,7 +71,7 @@ function Meeting({
         };
 
         loadNotes();
-    }, []);
+    }, [roomName]);
 
     useEffect(() => {
         if (notesVisible) {
@@ -62,29 +82,44 @@ function Meeting({
 
     const handleSaveNotes = async () => {
         const token = localStorage.getItem('token');
+        const url = isNoteCreated
+            ? `http://127.0.0.1:8000/api/users/note/${noteId}/`
+            : 'http://127.0.0.1:8000/api/users/note/';
+        const method = isNoteCreated ? 'PUT' : 'POST';
+
+        const body = {
+            note: notes,
+            appointment: appointmentId
+        };
+
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/users/note/', {
-                method: 'POST',
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `${token}`,
                 },
-                body: JSON.stringify({ note: notes }),
+                body: JSON.stringify(body),
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log('Notes saved:', data);
-                setSaveStatus('Notes saved successfully!');
+                setSaveStatus('Заметки сохранены успешно!');
+                if (!isNoteCreated) {
+                    setIsNoteCreated(true);
+                    setNoteId(data.id);  // Обновляем noteId для последующих PUT-запросов
+                }
             } else {
                 throw new Error('Failed to save notes');
             }
         } catch (error) {
             console.error('Error saving notes:', error);
-            setSaveStatus('Error saving notes');
+            setSaveStatus('Произошла ошибка при сохранении заметок');
         } finally {
-            setTimeout(() => setSaveStatus(''), 3000); // Clear save status after 3 seconds
+            setTimeout(() => setSaveStatus(''), 3000);
         }
     };
+
+
 
     const handleOpenNotes = () => {
         setNotesVisible(true);
@@ -177,11 +212,17 @@ function Meeting({
                 >
                     <img src={videoCameraIcon} alt="Camera" className="icon" />
                 </button>
-                <button
+                {/*<button
                     className={getButtonClass(screenShared)}
                     onClick={handleScreenBtn}
                 >
                     <img src={screenMirrorIcon} alt="Screen" className="icon" />
+                </button>*/}
+                <button
+                    className="meeting-btn"
+                    onClick={notesVisible ? handleHideNotes : handleOpenNotes}
+                >
+                    {notesVisible ? <img src={saveNote} alt="Save Note" className="icon" /> : <img src={createNote} alt="Create Note" className="icon" />}
                 </button>
 
                 <button
@@ -189,12 +230,6 @@ function Meeting({
                     onClick={handleLeaveBtn}
                 >
                     <img src={endCallIcon} alt="End Call" className="icon" />
-                </button>
-                <button
-                    className="meeting-btn"
-                    onClick={notesVisible ? handleHideNotes : handleOpenNotes}
-                >
-                    {notesVisible ? <img src={createNote} alt="Microphone" className="icon" /> : <img src={createNote} alt="Microphone" className="icon" />}
                 </button>
             </div>
             <div className={`notes-container ${notesVisible ? 'open' : ''}`}>

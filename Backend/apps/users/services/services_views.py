@@ -1,25 +1,15 @@
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation
+from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation, Note
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer, \
-    EvaluationSerializer
+    EvaluationSerializer, NoteSerializer
 from rest_framework import status
 import os
 import requests
 import random
 from rest_framework.response import Response
-from django.core.mail import send_mail
 
-
-def send_deletion_email(email, user_name, appointment, user_role):
-    subject = 'Отмена консультации'
-    message = (
-        f'Доброго времени суток 😊.\n\n'
-        f'{user_role} {user_name} отменил консультацию на {appointment.date} в {appointment.time.strftime("%H:%M")}.\n'
-        f'Просим прощения, за оказанные неудобства. Всего наилучшего!'
-    )
-
-    send_mail(subject, message, os.environ.get("EMAIL"), [email])
+from apps.users.utils import send_deletion_email
 
 
 class RegistrationService:
@@ -182,7 +172,18 @@ class AppointmentService:
         METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
         METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
 
-        roomID = random.randint(101234554312, 998765432156)
+        # Получение существующих идентификаторов (url)
+        existing_ids = set(Appointment.objects.values_list('url', flat=True))
+        attempts = 0
+        max_attempts = 1000
+
+        roomID = 0
+
+        while attempts < max_attempts:
+            roomID = random.randint(101234554312, 998765432156)
+            if roomID not in existing_ids:
+                break
+            attempts += 1
 
         url = f"https://{METERED_DOMAIN}/api/v1/room?secretKey={METERED_SECRET_KEY}"
         payload = {
@@ -252,4 +253,14 @@ class AppointmentService:
                 send_deletion_email(email, user_name, appointment, user_role)
                 return True, 'Appointment deleted success'
         return False, 'Appointment date is up'
+
+    @staticmethod
+    def get_appointment_note(request):
+        meeting_id = request.query_params.get('meetingID')
+        appointment_id = Appointment.objects.get(url=meeting_id).id
+        try:
+            note = Note.objects.get(appointment=appointment_id)
+            return True, note
+        except Exception as e:
+            return False, appointment_id
 

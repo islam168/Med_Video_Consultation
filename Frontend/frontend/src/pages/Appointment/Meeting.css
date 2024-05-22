@@ -126,7 +126,7 @@
 
 .meeting-notes {
     width: 100%;
-    height: 200px; /* Bigger notes area */
+    height: 10%; /* Bigger notes area */
     padding: 15px;
     border-radius: 8px;
     border: 2px solid #ccc; /* Border around the textarea */
@@ -148,7 +148,7 @@
 
 .meeting-btn.save-notes,
 .meeting-btn.hide-notes {
-    width: calc(50% - 5px); /* Чтобы учесть отступ между кнопками */
+    width: 50%;
     background-color: #068466;
     color: #fff;
     border: none;
@@ -156,7 +156,7 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 10px;
+    height: 5%;
 }
 
 .meeting-btn.save-notes:hover,

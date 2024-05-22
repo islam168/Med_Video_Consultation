@@ -6,7 +6,8 @@ from apps.users.views import (RegistrationAPIView, MyTokenObtainPairView, Doctor
                               QualificationListAPIView, HomePageAPIView, LogoutView, CreateAppointmentAPIView,
                               ValidateMeetingAPIView, GetMeteredDomainAPIView, AppointmentListAPIView,
                               EvaluationListCreateAPIView, EvaluationRetrieveUpdateAPIView, DeleteAppointmentAPIView,
-                              FavoritesRetrieveUpdateDestroyAPIView, ProblemListAPIView, CreateNoteAPIView)
+                              FavoritesRetrieveUpdateDestroyAPIView, ProblemListAPIView, ListCreateNoteAPIView,
+                              UpdateNoteAPIView)
 
 urlpatterns = [
     path('', HomePageAPIView.as_view(), name='home_page'),
@@ -36,5 +37,6 @@ urlpatterns = [
     path('validate-meeting', ValidateMeetingAPIView.as_view(), name='meeting'),
     path('metered-domain', GetMeteredDomainAPIView.as_view(), name='metered-domain'),
 
-    path('note/', CreateNoteAPIView.as_view(), name='note'),
+    path('note/', ListCreateNoteAPIView.as_view(), name='note'),
+    path('note/<int:id>/', UpdateNoteAPIView.as_view(), name='note'),
 ]

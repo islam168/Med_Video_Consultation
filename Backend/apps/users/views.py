@@ -1,7 +1,7 @@
 import os
 import requests
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, \
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
+    ListCreateAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
@@ -270,15 +270,29 @@ class GetMeteredDomainAPIView(RetrieveAPIView):
         return Response({"METERED_DOMAIN": METERED_DOMAIN}, status=status.HTTP_200_OK)
 
 
-class CreateNoteAPIView(CreateAPIView):
+class ListCreateNoteAPIView(ListCreateAPIView):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
     permission_classes = [AllowAny, ]
 
+    def get(self, request, *args, **kwargs):
+        result, note_data = AppointmentService.get_appointment_note(request)
+        if result:
+            serializer = self.serializer_class(note_data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'appointment_id': note_data}, status=status.HTTP_200_OK)
+
     def post(self, request, *args, **kwargs):
-        print(request.data)
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateNoteAPIView(UpdateAPIView):
+    serializer_class = NoteSerializer
+    permission_classes = [AllowAny, ]
+    lookup_field = 'id'
+    queryset = Note.objects.all()
