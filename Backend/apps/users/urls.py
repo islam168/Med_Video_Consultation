@@ -1,13 +1,12 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-
 from apps.users.views import (RegistrationAPIView, MyTokenObtainPairView, DoctorCreateCardAPIView,
                               DoctorCardRetrieveUpdateAPIView, DoctorPageRetrieveAPIView, DoctorListAPIView,
                               QualificationListAPIView, HomePageAPIView, LogoutView, CreateAppointmentAPIView,
                               ValidateMeetingAPIView, GetMeteredDomainAPIView, AppointmentListAPIView,
                               EvaluationListCreateAPIView, EvaluationRetrieveUpdateAPIView, DeleteAppointmentAPIView,
                               FavoritesRetrieveUpdateDestroyAPIView, ProblemListAPIView, ListCreateNoteAPIView,
-                              UpdateNoteAPIView)
+                              UpdateNoteAPIView, CreateUpdateReportAPIView)
 
 urlpatterns = [
     path('', HomePageAPIView.as_view(), name='home_page'),
@@ -37,6 +36,8 @@ urlpatterns = [
     path('validate-meeting', ValidateMeetingAPIView.as_view(), name='meeting'),
     path('metered-domain', GetMeteredDomainAPIView.as_view(), name='metered-domain'),
 
-    path('note/', ListCreateNoteAPIView.as_view(), name='note'),
+    path('note/', ListCreateNoteAPIView.as_view(), name='create_note'),
     path('note/<int:id>/', UpdateNoteAPIView.as_view(), name='note'),
+
+    path('report/<int:id>/', CreateUpdateReportAPIView.as_view(), name='report'),
 ]

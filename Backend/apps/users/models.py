@@ -244,8 +244,13 @@ class Evaluation(models.Model):
         return f'{self.doctor} {self.patient.email}'
 
 
-class Note(models.Model):
-    note = models.TextField(verbose_name='Заметки')
+class NoteReport(models.Model):
+
+    class Status(models.TextChoices):  # Класс Status используется для определения допустимых значений поля status ниже
+        DRAFT = 'DF', 'DRAFT'
+        PUBLISHED = 'PB', 'PUBLISHED'
+
+    text = models.TextField(verbose_name='Заметки')
     appointment = models.OneToOneField(
         on_delete=models.CASCADE,
         related_name='note',
@@ -253,10 +258,14 @@ class Note(models.Model):
         verbose_name='Запись на прием',
         default=None
     )
+    # Если статус DRAFT это просто заметки, если PUBLISHED, то уже отчет
+    status = models.CharField(max_length=2,
+                              choices=Status.choices,
+                              default=Status.DRAFT)
 
     class Meta:
-        verbose_name = 'Заметка'
-        verbose_name_plural = 'Заметки'
+        verbose_name = 'Заметка - Отчет'
+        verbose_name_plural = 'Заметки - Отчеты'
 
     def __str__(self):
-        return f"{self.id}, {self.note}, {self.appointment.id}"
+        return f"{self.id}, {self.text}, {self.appointment.id}"

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from apps.users.models import (Qualification, Doctor, DoctorCard, Problem, DoctorSchedule, DayOfWeek,
-                               DoctorAppointmentDate, Appointment, Evaluation, Patient, Note)
+                               DoctorAppointmentDate, Appointment, Evaluation, Patient, NoteReport)
 
 
 admin.site.register(DoctorCard)
@@ -9,7 +9,7 @@ admin.site.register(DoctorAppointmentDate)
 admin.site.register(Appointment)  # Удалить потом
 admin.site.register(Evaluation)  # Удалить потом
 admin.site.register(Patient)  # Удалить потом
-admin.site.register(Note)  # Удалить потом
+admin.site.register(NoteReport)  # Удалить потом
 
 
 @admin.register(Qualification)

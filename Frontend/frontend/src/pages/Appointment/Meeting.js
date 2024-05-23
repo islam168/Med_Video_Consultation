@@ -56,7 +56,7 @@ function Meeting({
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    setNotes(data.note);
+                    setNotes(data.text);
                     if (data.id) {
                         setNoteId(data.id);
                         setIsNoteCreated(true); // Устанавливаем в true, если заметка уже существует
@@ -90,9 +90,11 @@ function Meeting({
         const method = isNoteCreated ? 'PUT' : 'POST';
 
         const body = {
-            note: notes,
+            text: notes,
             appointment: appointmentId
         };
+
+        console.log(body)
 
         try {
             const response = await fetch(url, {

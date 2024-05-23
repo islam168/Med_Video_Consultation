@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils import timezone
-from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation, Note
+from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation, NoteReport
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer, \
     EvaluationSerializer
 from rest_framework import status
@@ -117,7 +116,16 @@ class AppointmentService:
 
                 appointment_date = appointment.date
 
+                def report(appointment_id):
+                    rep = NoteReport.objects.filter(appointment=appointment_id).first()
+                    if rep and rep.status == 'PB':
+                        print(rep)
+                        appointment_data['report'] = rep.id
+                    else:
+                        appointment_data['report'] = None
+
                 if appointment_date < today:
+                    report(appointment.id)
                     past_appointment.append(appointment_data)
                 else:
                     if appointment_date == today:
@@ -129,6 +137,7 @@ class AppointmentService:
 
                         # Проверка, что разница составляет 45 минут
                         if abs(time_difference) > timedelta(minutes=45):
+                            report(appointment.id)
                             past_appointment.append(appointment_data)
                         else:
                             appointment_data['url'] = appointment.url
@@ -157,7 +166,17 @@ class AppointmentService:
 
                 appointment_date = appointment.date
 
+                def report(appointment_id):
+                    rep = NoteReport.objects.filter(appointment=appointment_id).first()
+                    if rep and rep.status == 'PB':
+                        appointment_data['report'] = rep.id
+                        appointment_data['is_published'] = True
+                    else:
+                        appointment_data['report'] = rep.id
+                        appointment_data['is_published'] = False
+
                 if appointment_date < today:
+                    report(appointment.id)
                     past_appointment.append(appointment_data)
                 else:
                     if appointment_date == today:
@@ -169,6 +188,7 @@ class AppointmentService:
 
                         # Проверка, что разница составляет 45 минут
                         if abs(time_difference) > timedelta(minutes=45):
+                            report(appointment.id)
                             past_appointment.append(appointment_data)
                         else:
                             appointment_data['url'] = appointment.url
@@ -296,7 +316,33 @@ class AppointmentService:
         meeting_id = request.query_params.get('meetingID')
         appointment_id = Appointment.objects.get(url=meeting_id).id
         try:
-            note = Note.objects.get(appointment=appointment_id)
+            note = NoteReport.objects.get(appointment=appointment_id)
             return True, note
         except Exception as e:
             return False, appointment_id
+
+    @staticmethod
+    def create_appointment_report(request):
+        doctor_id = request.user.id
+        data = request.data
+
+        try:
+            Doctor.objects.get(id=doctor_id)
+        except Doctor.DoesNotExist:
+            return False, 'Doctor does not exist'
+
+        report_id = data['id']
+
+        try:
+            report = NoteReport.objects.get(id=report_id)
+        except NoteReport.DoesNotExist:
+            return False, 'Report does not exist'
+
+        if report.status != 'PB':
+            report.status = 'PB'
+
+        report.text = data['text']
+
+        report.save()
+
+        return True, 'Report saved successfully'

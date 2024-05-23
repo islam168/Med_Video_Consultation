@@ -3,7 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apps.users.services.services_serializers import DoctorService, DoctorAppointmentTimeService, \
     TokenService, DoctorRatingService
 from apps.users.models import Patient, Doctor, DoctorCard, Qualification, Problem, DoctorSchedule, Appointment, \
-    Evaluation, Note
+    Evaluation, NoteReport
 
 
 class PatientCreateSerializer(serializers.ModelSerializer):
@@ -173,5 +173,12 @@ class FavoritesSerializer(serializers.ModelSerializer):
 class NoteSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Note
-        fields = ['id', 'note', 'appointment']
+        model = NoteReport
+        fields = ['id', 'text', 'appointment']
+
+
+class ReportSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = NoteReport
+        fields = ['id', 'text', 'appointment', 'status']

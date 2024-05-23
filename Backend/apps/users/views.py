@@ -9,11 +9,11 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
-from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation, Note
+from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation, NoteReport
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
                                     ProblemSerializer, AppointmentSerializer, EvaluationSerializer, FavoritesSerializer,
-                                    NoteSerializer)
+                                    NoteSerializer, ReportSerializer)
 from apps.users.services.services_views import (RegistrationService, DoctorService, AppointmentService)
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
@@ -145,7 +145,7 @@ class FavoritesRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         try:
             doctor = Doctor.objects.get(id=doctor_id)
             patient.favorites.add(doctor)
-            return Response({'message': 'Doctor added to favorites'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Doctor added to favorites'}, status=status.HTTP_201_CREATED)
         except Doctor.DoesNotExist:
             return Response({'error': 'Doctor not found'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -270,9 +270,9 @@ class GetMeteredDomainAPIView(RetrieveAPIView):
 
 
 class ListCreateNoteAPIView(ListCreateAPIView):
-    queryset = Note.objects.all()
+    queryset = NoteReport.objects.all()
     serializer_class = NoteSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
         result, note_data = AppointmentService.get_appointment_note(request)
@@ -283,6 +283,10 @@ class ListCreateNoteAPIView(ListCreateAPIView):
             return Response({'appointment_id': note_data}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        try:
+            request.data['text']
+        except KeyError:
+            return Response('Note is empty', status=status.HTTP_400_BAD_REQUEST)
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -292,6 +296,19 @@ class ListCreateNoteAPIView(ListCreateAPIView):
 
 class UpdateNoteAPIView(UpdateAPIView):
     serializer_class = NoteSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAuthenticated, ]
     lookup_field = 'id'
-    queryset = Note.objects.all()
+    queryset = NoteReport.objects.all()
+
+
+class CreateUpdateReportAPIView(RetrieveUpdateAPIView):
+    serializer_class = ReportSerializer
+    permission_classes = [IsAuthenticated, ]
+    lookup_field = 'id'
+    queryset = NoteReport.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        result, message = AppointmentService.create_appointment_report(request)
+        if result:
+            return Response(message, status=status.HTTP_201_CREATED)
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
