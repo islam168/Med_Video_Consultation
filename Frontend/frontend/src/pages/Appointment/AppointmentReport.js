@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Добавляем useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Импортируем FontAwesomeIcon
+import { faUser, faUserMd, faCalendarAlt, faClock } from '@fortawesome/free-solid-svg-icons'; // Импортируем нужные иконки
 import './AppointmentReport.css';
 import { jwtDecode } from "jwt-decode";
 
 function AppointmentReport() {
-    const navigate = useNavigate(); // Получаем функцию для перехода
+    const navigate = useNavigate();
     const { id } = useParams();
     const [report, setReport] = useState(null);
     const [error, setError] = useState(null);
@@ -63,7 +65,7 @@ function AppointmentReport() {
             }
 
             console.log('Report sent successfully');
-            navigate('/meet'); // Переходим на страницу /appointment после успешной отправки
+            navigate('/meet');
         } catch (error) {
             setError(error.message);
         }
@@ -96,16 +98,19 @@ function AppointmentReport() {
             <div className="report-content">
                 <div className="info">
                     <span className="info-block">
-                        <p><strong>Пациент:</strong> {report.appointment.patient}</p>
-                        <p><strong>Доктор:</strong> {report.appointment.doctor}</p>
+                        <p><FontAwesomeIcon icon={faUser} style={{ color: '#068466' }}/> <strong>Пациент:</strong> {report.appointment.patient}</p>
+                        <p><FontAwesomeIcon icon={faUserMd} style={{ color: '#068466' }}/> <strong>Доктор:</strong> {report.appointment.doctor}</p>
                     </span>
                     <span className="info-block">
-                        <span className="date-time"><strong>Дата:</strong> {report.appointment.date} <strong>Время:</strong> {report.appointment.time}</span>
+                        <span className="date-time">
+                            <p><FontAwesomeIcon icon={faCalendarAlt} style={{ color: '#068466' }} /> <strong>Дата:</strong> {report.appointment.date} </p>
+                            <p><FontAwesomeIcon icon={faClock} style={{ color: '#068466' }} /> <strong>Время:</strong> {report.appointment.time}</p>
+                        </span>
                     </span>
                 </div>
 
                 <div className="conclusion">
-                    <p><strong>Заключение</strong></p>
+                    <p className="conclusion" id="text"><strong>Заключение</strong></p>
                     {!isPatient ? (
                         <form onSubmit={handleFormSubmit} className="update-form">
                             <textarea
@@ -113,8 +118,9 @@ function AppointmentReport() {
                                 onChange={handleTextChange}
                                 className="editable-text"
                             />
-                            <button type="submit">Отправить отчёт</button>
-                        </form>
+                            <button type="submit">
+                                {report.status ? 'Обновить отчёт' : 'Отправить отчёт'}
+                            </button>                        </form>
                     ) : (
                         <p className="text">{report.text}</p>
                     )}

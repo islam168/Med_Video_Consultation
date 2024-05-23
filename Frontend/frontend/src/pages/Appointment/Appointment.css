@@ -48,6 +48,13 @@
     background-color: #004d49;
 }
 
+#create {
+    background-color: #007bff;
+}
+
+#create:hover{
+    background-color: #0044c2;
+}
 /* Добавляем стили для span */
 .appointment-info span {
     text-decoration: none; /* Убираем подчеркивание */

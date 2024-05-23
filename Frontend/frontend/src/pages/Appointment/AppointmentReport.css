@@ -27,12 +27,13 @@
 }
 
 .date-time {
-    margin-left: 20%;
-    font-size: 18px;
+    float: right;
+    margin-right: 8%;
 }
 
+
 .info p {
-    font-size: 18px;
+    font-size: 16px;
     margin-bottom: 10px;
 }
 
@@ -42,7 +43,20 @@
 }
 
 .conclusion .text {
-    margin-left: 3%;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.conclusion #text{
+    margin-top: -1.5%;
+    text-align: center;
+    font-size: 24px;
+    border-bottom: 1px solid #ccc;
+}
+
+.text {
+    white-space: pre-wrap;
+    text-align: justify; /* Выравнивание по ширине */
 }
 
 .error-message {
@@ -86,3 +100,4 @@
 .update-form button:hover {
     background-color: #046c57;
 }
+

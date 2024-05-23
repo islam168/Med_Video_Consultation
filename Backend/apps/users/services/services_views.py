@@ -119,7 +119,6 @@ class AppointmentService:
                 def report(appointment_id):
                     rep = NoteReport.objects.filter(appointment=appointment_id).first()
                     if rep and rep.status == 'PB':
-                        print(rep)
                         appointment_data['report'] = rep.id
                     else:
                         appointment_data['report'] = None
@@ -168,12 +167,16 @@ class AppointmentService:
 
                 def report(appointment_id):
                     rep = NoteReport.objects.filter(appointment=appointment_id).first()
-                    if rep and rep.status == 'PB':
-                        appointment_data['report'] = rep.id
-                        appointment_data['is_published'] = True
+                    if rep:
+                        if rep.status == 'PB':
+                            appointment_data['report'] = rep.id
+                            appointment_data['is_published'] = True
+                        else:
+                            appointment_data['report'] = rep.id
+                            appointment_data['is_published'] = False
                     else:
-                        appointment_data['report'] = rep.id
-                        appointment_data['is_published'] = False
+                        appointment_data['report'] = None
+
 
                 if appointment_date < today:
                     report(appointment.id)

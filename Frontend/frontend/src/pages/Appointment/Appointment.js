@@ -161,7 +161,7 @@ function Appointment({ handleJoinMeeting }) {
                                         <>
                                             {appointment.is_published === false ? (
                                                 <Link to={`/report/${appointment.report}`}>
-                                                    <button className="appointment-button">Создать отчет</button>
+                                                    <button className="appointment-button" id="create">Создать отчет</button>
                                                 </Link>
                                             ) : (
 
