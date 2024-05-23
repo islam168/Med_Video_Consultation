@@ -157,6 +157,21 @@ function Appointment({ handleJoinMeeting }) {
                                     </div>
                                     <div className="appointment-info">Дата: {appointment.date}</div>
                                     <div className="appointment-info">Время: {appointment.time}</div>
+                                    {appointment.report !== null && (
+                                        <>
+                                            {appointment.is_published === false ? (
+                                                <Link to={`/report/${appointment.report}`}>
+                                                    <button className="appointment-button">Создать отчет</button>
+                                                </Link>
+                                            ) : (
+
+                                                <Link to={`/report/${appointment.report}`}>
+                                                    <button className="appointment-button">Просмотреть отчет</button>
+                                                </Link>
+                                            )}
+                                        </>
+                                    )}
+                                    {errorMessage && <div className="error-message">{errorMessage}</div>}
                                 </li>
                             ))}
                         </ul>

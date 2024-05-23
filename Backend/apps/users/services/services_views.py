@@ -329,7 +329,7 @@ class AppointmentService:
         try:
             Doctor.objects.get(id=doctor_id)
         except Doctor.DoesNotExist:
-            return False, 'Doctor does not exist'
+            return False, 'Doctor does not exist or user is not a doctor'
 
         report_id = data['id']
 
@@ -346,3 +346,19 @@ class AppointmentService:
         report.save()
 
         return True, 'Report saved successfully'
+
+    @staticmethod
+    def appointment_report(request, report_id):
+        user_id = request.user.id
+
+        try:
+            report = NoteReport.objects.get(id=report_id)
+        except NoteReport.DoesNotExist:
+            return False, 'Report does not exist'
+
+        is_patient = Patient.objects.filter(id=user_id).exists()
+
+        if is_patient and report.status == 'DF':
+            return False, 'Patient does not have access rights to the page'
+
+        return True, 'Success'

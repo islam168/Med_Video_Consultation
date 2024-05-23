@@ -307,6 +307,35 @@ class CreateUpdateReportAPIView(RetrieveUpdateAPIView):
     lookup_field = 'id'
     queryset = NoteReport.objects.all()
 
+    def get(self, request, *args, **kwargs):
+        report_id = kwargs.get('id')
+        result, message = AppointmentService.appointment_report(request, report_id)
+        if result:
+            report = NoteReport.objects.get(id=report_id)
+            serializer = ReportSerializer(report).data
+
+            patient = report.appointment.patient
+            patient_name = f"{patient.last_name} {patient.first_name}"
+            if patient.middle_name:
+                patient_name += f" {patient.middle_name}"
+
+            doctor = report.appointment.doctor
+            doctor_name = f"{doctor.last_name} {doctor.first_name}"
+            if doctor.middle_name:
+                doctor_name += f" {doctor.middle_name}"
+
+            appointment_data = {
+                'patient': patient_name,
+                'doctor': doctor_name,
+                'date': report.appointment.date,
+                'time': report.appointment.time.strftime("%H:%M"),
+            }
+            serializer['appointment'] = appointment_data
+            return Response(serializer, status=status.HTTP_200_OK)
+        elif message == 'Patient does not have access rights to the page':
+            return Response(message, status=status.HTTP_403_FORBIDDEN)
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request, *args, **kwargs):
         result, message = AppointmentService.create_appointment_report(request)
         if result:

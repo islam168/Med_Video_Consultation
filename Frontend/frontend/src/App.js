@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import NotFoundPage from "./components/Error/NotFoundPage";
 import Meet from "./pages/Appointment/Meet";
+import AppointmentReport from "./pages/Appointment/AppointmentReport";
 
 function App() {
     const [showNavFooter, setShowNavFooter] = useState(true);
@@ -33,6 +34,7 @@ function App() {
                         <Route path="/create_doctor_info_card" element={<CreateDoctorInfoCard />} />
                         <Route path="/update_doctor_card/:id" element={<UpdateDoctorForm />} />
                         <Route path="/doctor/:id" element={<DoctorProfile />} />
+                        <Route path="/report/:id" element={<AppointmentReport />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/qualifications" element={<QualificationPage />} />
                         <Route path="/problems" element={<ProblemPage />} />
