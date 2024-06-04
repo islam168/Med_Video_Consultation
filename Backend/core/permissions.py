@@ -6,8 +6,6 @@ from apps.users.models import Doctor
 
 class IsDoctorData(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        print(obj.doctor_id.id)
-        print(request.user.id)
         return obj.doctor_id.id == request.user.id
 
 

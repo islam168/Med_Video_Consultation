@@ -19,3 +19,14 @@ def send_deletion_email(email, user_name, appointment, user_role):
     )
 
     send_mail(subject, message, os.environ.get("EMAIL"), [email])
+
+
+def send_reset_code_deletion_email(email, code):
+    subject = 'Сброс пароля'
+    message = (
+        f'Доброго времени суток 😊.\n\n'
+        f'Ваш код сброса пароля {code}. \n'
+        f'Ссылка на страницу сброса пароля http://localhost:3000/password_reset_code'
+    )
+
+    send_mail(subject, message, os.environ.get("EMAIL"), [email])

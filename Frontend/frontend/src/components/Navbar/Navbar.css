@@ -41,7 +41,7 @@
 .logo-name {
     font-size: 30px;
     margin-left: 8px;
-    color: var(--primary-color);
+    color: var(--navbar-primary-color);
     text-decoration: none; /* Убираем подчеркивание */
     font-weight: bold;
 }
@@ -129,11 +129,11 @@
 }
 
 .logout-button {
-    color: var(--primary-color);
+    color: var(--navbar-primary-color);
     background-color: white;
     text-decoration: none;
     font-weight: bold;
-    border: 2px solid var(--primary-color);
+    border: 2px solid var(--navbar-primary-color);
     border-radius: 4px;
     padding: 8px 16px;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -143,4 +143,48 @@
     background-color: #ec0f0f;
     border: 2px solid #ec0f0f;
     color: white;
+}
+
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    background-color: var(--dropdown-bg);
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 var(--dropdown-shadow);
+    z-index: 1;
+    top: 100%; /* Position below the profile icon */
+    left: 50%; /* Center horizontally with the profile icon */
+    transform: translateX(-50%); /* Correct the horizontal alignment */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.profile-container:hover .profile-dropdown {
+    display: block;
+}
+
+.profile-dropdown .user-name {
+    margin-top: 4%;
+    padding: 12px 16px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.profile-dropdown .logout-button {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0;
 }

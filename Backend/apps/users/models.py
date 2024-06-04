@@ -175,6 +175,7 @@ class DoctorAppointmentDate(models.Model):
     )
     date = models.DateField(verbose_name='Дата')
 
+
     class Meta:
         verbose_name = 'Дата приема'
         verbose_name_plural = 'Даты приемов'
@@ -200,6 +201,7 @@ class Appointment(models.Model):
     time = models.TimeField(verbose_name='Время')
     date = models.DateField(verbose_name='Дата')
     url = models.CharField(max_length=20, unique=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Прием у доктора'
@@ -263,9 +265,32 @@ class NoteReport(models.Model):
                               choices=Status.choices,
                               default=Status.DRAFT)
 
+    created_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         verbose_name = 'Заметка - Отчет'
         verbose_name_plural = 'Заметки - Отчеты'
 
     def __str__(self):
         return f"{self.id}, {self.text}, {self.appointment.id}"
+
+
+class PasswordReset(models.Model):
+    user = models.ForeignKey(
+        to='User',
+        on_delete=models.CASCADE,
+        related_name='password_reset',
+        verbose_name='Пользователь'
+    )
+    code = models.PositiveIntegerField(
+        verbose_name='Код',
+        validators=[MinValueValidator(100000), MaxValueValidator(999999)]
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Код сброса пароля'
+        verbose_name_plural = 'Коды сброса паролей'
+
+    def __str__(self):
+        return f"Пользователь: {self.user}. Код: {self.code}. {self.created_at}"

@@ -6,7 +6,8 @@ from apps.users.views import (RegistrationAPIView, MyTokenObtainPairView, Doctor
                               ValidateMeetingAPIView, GetMeteredDomainAPIView, AppointmentListAPIView,
                               EvaluationListCreateAPIView, EvaluationRetrieveUpdateAPIView, DeleteAppointmentAPIView,
                               FavoritesRetrieveUpdateDestroyAPIView, ProblemListAPIView, ListCreateNoteAPIView,
-                              UpdateNoteAPIView, CreateUpdateReportAPIView)
+                              UpdateNoteAPIView, CreateUpdateReportAPIView, CreatePasswordResetAPIView,
+                              CreatePasswordResetCodeAPIView)
 
 urlpatterns = [
     path('', HomePageAPIView.as_view(), name='home_page'),
@@ -17,7 +18,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='auth_logout_all'),
 
     path('create_doctor_card/', DoctorCreateCardAPIView.as_view(), name='create_doctor_card'),
-    path('doctor_card/<int:id>/', DoctorCardRetrieveUpdateAPIView.as_view(), name='doctor_card'),
+    path('doctor_card/<int:doctor_id>/', DoctorCardRetrieveUpdateAPIView.as_view(), name='doctor_card'),
 
     path('doctor/<int:id>/', DoctorPageRetrieveAPIView.as_view(), name='doctor_page'),
     path('doctors/', DoctorListAPIView.as_view(), name='doctor_list'),
@@ -40,4 +41,7 @@ urlpatterns = [
     path('note/<int:id>/', UpdateNoteAPIView.as_view(), name='note'),
 
     path('report/<int:id>/', CreateUpdateReportAPIView.as_view(), name='report'),
+
+    path('password_reset/', CreatePasswordResetAPIView.as_view(), name='password_reset'),
+    path('password_reset_code/', CreatePasswordResetCodeAPIView.as_view(), name='password_reset_code'),
 ]

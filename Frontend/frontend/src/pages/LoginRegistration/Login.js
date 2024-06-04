@@ -116,7 +116,7 @@ const Login = () => {
                             </button>
                             {errorMessage && <p className="mt-3 text-danger text-blue">{errorMessage}</p>}
                             <div className="login-btn">
-                                Нет аккаунта? <Link to="/registration" className="text-button">Зарегистрируйтесь.</Link>
+                                <Link to="/registration" className="text-button">Регистрация</Link>|<Link to="/password_reset_code" className="text-button">Забыл пароль</Link>
                             </div>
                         </form>
                     </div>

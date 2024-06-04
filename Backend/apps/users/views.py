@@ -5,16 +5,17 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAP
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.filters import DoctorFilter
-from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation, NoteReport
+from apps.users.models import Patient, DoctorCard, Doctor, Qualification, Problem, Appointment, Evaluation, NoteReport, \
+    PasswordReset
 from apps.users.serializers import (PatientCreateSerializer, MyTokenObtainPairSerializer, DoctorCardSerializer,
                                     DoctorPageSerializer, DoctorListSerializer, QualificationSerializer,
                                     ProblemSerializer, AppointmentSerializer, EvaluationSerializer, FavoritesSerializer,
-                                    NoteSerializer, ReportSerializer)
-from apps.users.services.services_views import (RegistrationService, DoctorService, AppointmentService)
+                                    NoteSerializer, ReportSerializer, PasswordResetSerializer)
+from apps.users.services.services_views import (RegistrationService, DoctorService, AppointmentService,
+                                                PasswordResetService)
 from core.permissions import IsDoctor, IsDoctorData
 from django_filters import rest_framework as filters
 import logging
@@ -29,6 +30,7 @@ class RegistrationAPIView(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         success, message = RegistrationService.register_patient(request.data)
+        print(message)
         if success:
             return Response(message, status=status.HTTP_201_CREATED)
         else:
@@ -59,7 +61,7 @@ class DoctorCardRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     queryset = DoctorCard.objects.all()
     serializer_class = DoctorCardSerializer
     permission_classes = [IsDoctorData,]
-    lookup_field = 'id'
+    lookup_field = 'doctor_id'
 
 
 class DoctorListAPIView(ListAPIView):
@@ -211,7 +213,7 @@ class CreateAppointmentAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request, *args, **kwargs):
-        result = AppointmentService.create_appointment(request.data)
+        result = AppointmentService.create_appointment(request)
         if result:
             return Response('Success', status=status.HTTP_200_OK)
         else:
@@ -280,7 +282,7 @@ class ListCreateNoteAPIView(ListCreateAPIView):
             serializer = self.serializer_class(note_data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response({'appointment_id': note_data}, status=status.HTTP_200_OK)
+            return Response({'appointment_id': note_data}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, *args, **kwargs):
         try:
@@ -341,3 +343,30 @@ class CreateUpdateReportAPIView(RetrieveUpdateAPIView):
         if result:
             return Response(message, status=status.HTTP_201_CREATED)
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreatePasswordResetAPIView(CreateAPIView):
+    queryset = PasswordReset.objects.all()
+    serializer_class = PasswordResetSerializer
+    permission_classes = [AllowAny, ]
+
+    def post(self, request, *args, **kwargs):
+        result, message = PasswordResetService.password_reset(request)
+        if result:
+            return Response(message, status=status.HTTP_201_CREATED)
+        else:
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreatePasswordResetCodeAPIView(CreateAPIView):
+    queryset = PasswordReset.objects.all()
+    serializer_class = PasswordResetSerializer
+    permission_classes = [AllowAny, ]
+
+    def post(self, request, *args, **kwargs):
+        result, message = PasswordResetService.password_reset_code(request)
+        if result:
+            print(message)
+            return Response(message, status=status.HTTP_201_CREATED)
+        else:
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)

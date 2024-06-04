@@ -14,6 +14,7 @@ const Registration = () => {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const navigate = useNavigate();
 
@@ -44,6 +45,11 @@ const Registration = () => {
             return;
         }
 
+        if (password !== confirmPassword) {
+            setErrorMessage('Пароли не совпадают');
+            return;
+        }
+
         const data = {
             first_name: first_name,
             last_name: last_name,
@@ -51,6 +57,7 @@ const Registration = () => {
             email: email,
             birthdate: birthdate,
             password: password,
+            confirm_password: confirmPassword
         };
 
         axios
@@ -167,17 +174,36 @@ const Registration = () => {
                                         required
                                     />
                                     <span className="password-toggle" onClick={togglePasswordVisibility}>
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
+                                        {showPassword ? <FaEye /> : <FaEyeSlash />}
+                                    </span>
                                 </div>
                             </div>
+
+                            <div className="form-group password-field left-align-label">
+                                <label htmlFor="confirmPassword">
+                                    Подтвердите пароль
+                                </label>
+                                <div className="password-input-wrapper">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        className="form-control"
+                                        id="confirmPassword"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                    />
+                                    <span className="password-toggle" onClick={togglePasswordVisibility}>
+                                        {showPassword ? <FaEye /> : <FaEyeSlash />}
+                                    </span>
+                                </div>
+                            </div>
+
                             <button type="submit" className="registration-btn">
                                 Зарегистрироваться
                             </button>
                             {errorMessage && <p className="mt-3 text-danger text-blue">{errorMessage}</p>}
                             <div className="login-btn">
-                                Уже есть аккаунт?
-                                <Link to="/login/" className="text-button"> Тогда войдите.</Link>
+                                <Link to="/login/" className="text-button">Войти</Link>
                             </div>
                         </form>
                     </div>

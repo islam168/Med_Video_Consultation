@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import './CreateDoctorInfoCard.css';
+import { jwtDecode } from 'jwt-decode';
+import './UpdateDoctorCard.css';
 
-const UpdateDoctorForm = () => {
+const UpdateDoctorCardForm = () => {
     const { id } = useParams();
     const [qualification, setQualification] = useState('');
     const [education, setEducation] = useState('');
@@ -13,13 +14,16 @@ const UpdateDoctorForm = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        const fetchDoctorCard = async () => {
+        const decodedToken = jwtDecode(token);
+        const userID = decodedToken.user_id;
+
+        const fetchDoctorCardData = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/users/doctor_card/${id}/`, {
+                const response = await fetch(`http://127.0.0.1:8000/api/users/doctor_card/${userID}/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': token
+                        'Authorization': `${token}`
                     }
                 });
 
@@ -40,7 +44,7 @@ const UpdateDoctorForm = () => {
         };
 
         if (id) {
-            fetchDoctorCard();
+            fetchDoctorCardData();
         }
     }, [id]);
 
@@ -48,7 +52,6 @@ const UpdateDoctorForm = () => {
         e.preventDefault();
 
         const token = localStorage.getItem('token');
-
         const data = {
             doctor_id: doctorId,
             qualification,
@@ -61,7 +64,7 @@ const UpdateDoctorForm = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token
+                    'Authorization': `${token}`
                 },
                 body: JSON.stringify(data)
             });
@@ -78,42 +81,39 @@ const UpdateDoctorForm = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="loading">Loading...</div>;
     }
 
     return (
-        <div className="doctor-form">
-            <form onSubmit={handleSubmit} className="create-doctor-card">
-                <label className="doctor-card-field">
+        <div className="doctor-form-container">
+            <form onSubmit={handleSubmit} className="doctor-form">
+                <label className="form-field">
                     Квалификация:
-                    <input
-                        type="text"
+                    <textarea
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
                         required
                     />
                 </label>
-                <label>
+                <label className="form-field">
                     Образование:
-                    <input
-                        type="text"
+                    <textarea
                         value={education}
                         onChange={(e) => setEducation(e.target.value)}
                         required
                     />
                 </label>
-                <label>
+                <label className="form-field">
                     Повышение квалификации:
-                    <input
-                        type="text"
+                    <textarea
                         value={advancedTraining}
                         onChange={(e) => setAdvancedTraining(e.target.value)}
                     />
                 </label>
-                <button type="submit">Обновить</button>
+                <button type="submit" className="submit-button">Обновить</button>
             </form>
         </div>
     );
 };
 
-export default UpdateDoctorForm;
+export default UpdateDoctorCardForm;

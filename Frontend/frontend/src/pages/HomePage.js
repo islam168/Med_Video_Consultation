@@ -9,6 +9,7 @@ function HomePage() {
     const [error, setError] = useState(null);
     const [doctors, setDoctors] = useState([]);
 
+
     useEffect(() => {
         fetch('http://127.0.0.1:8000/api/users/')
             .then((response) => {
@@ -69,16 +70,32 @@ function HomePage() {
 
                 <section className="home-section">
                     <h3>Что вас беспокоит?</h3>
-                    <Carousel showThumbs={false} showStatus={false}
-                              showIndicators={true} showArrows={true} emulateTouch={true} infiniteLoop={true}
-                              centerMode={true} centerSlidePercentage={33.33} dynamicHeight={false}>
+                    <Carousel
+                        showThumbs={false}
+                        showStatus={false}
+                        showIndicators={true}
+                        showArrows={true}
+                        emulateTouch={true}
+                        infiniteLoop={true}
+                        centerMode={true}
+                        centerSlidePercentage={33.33}
+                        dynamicHeight={false}
+                        className="circular-carousel" // Добавьте класс для применения стилей, если необходимо
+                    >
+                        {/* Используйте обычный маппинг */}
                         {problems.map((problem) => (
-                            <div className="home-problem-card" key={problem.slug} onClick={() => handleProblemCardClick(problem)}>
+                            <div
+                                className="home-problem-card"
+                                key={problem.slug}
+                                onClick={() => handleProblemCardClick(problem)}
+                            >
                                 <img src={`http://127.0.0.1:8000${problem.image}`} alt={problem.name}/>
                                 <p>{problem.name}</p>
                             </div>
                         ))}
                     </Carousel>
+
+
                 </section>
 
                 <section className="home-section">

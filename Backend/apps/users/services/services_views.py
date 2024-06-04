@@ -1,24 +1,30 @@
 from datetime import datetime, timedelta
+
+import pytz
 from django.core.exceptions import ObjectDoesNotExist
-from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation, NoteReport
+from apps.users.models import Patient, DoctorCard, Doctor, Appointment, Evaluation, NoteReport, User, PasswordReset
 from apps.users.serializers import PatientCreateSerializer, DoctorCardSerializer, AppointmentSerializer, \
-    EvaluationSerializer
+    EvaluationSerializer, PasswordResetSerializer
 from rest_framework import status
 import os
 import requests
 import random
 from rest_framework.response import Response
 
-from apps.users.utils import send_deletion_email
+from apps.users.utils import send_deletion_email, send_reset_code_deletion_email
+from core import settings
 
 
 class RegistrationService:
     @staticmethod
     def register_patient(data):
-        email = data.get('email')
+        email = data['email']
 
         if Patient.objects.filter(email=email).exists():
             return False, 'A user with this email already exists'
+
+        if data['password'] != data['confirm_password']:
+            return False, 'Passwords don not match'
 
         serializer = PatientCreateSerializer(data=data)
 
@@ -177,7 +183,6 @@ class AppointmentService:
                     else:
                         appointment_data['report'] = None
 
-
                 if appointment_date < today:
                     report(appointment.id)
                     past_appointment.append(appointment_data)
@@ -215,19 +220,20 @@ class AppointmentService:
         return result
 
     @staticmethod
-    def create_appointment(data):
+    def create_appointment(request):
+        data = request.data
+
+        try:
+            Patient.objects.get(id=request.user.id)
+        except Patient.DoesNotExist:
+            return "User is not a patient"
+
         doctor = data['doctor']
-        patient = data['patient']
 
         try:
             Doctor.objects.get(id=doctor)
         except ObjectDoesNotExist:
             return "Doctor not found"
-
-        try:
-            Patient.objects.get(id=patient)
-        except ObjectDoesNotExist:
-            return "Patient not found"
 
         METERED_SECRET_KEY = os.environ.get("METERED_SECRET_KEY")
         METERED_DOMAIN = os.environ.get("METERED_DOMAIN")
@@ -252,7 +258,7 @@ class AppointmentService:
         r = requests.post(url, data=payload)
 
         if r.status_code == status.HTTP_200_OK:
-            data['url'] = roomID  # url-адрес видео конференции приема
+            data['url'] = roomID  # ID комнаты консультации
             serializer = AppointmentSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
@@ -365,3 +371,84 @@ class AppointmentService:
             return False, 'Patient does not have access rights to the page'
 
         return True, 'Success'
+
+
+class PasswordResetService:
+    @staticmethod
+    def password_reset(request):
+        data = request.data
+        code = data['code']
+
+        try:
+            password_reset = PasswordReset.objects.get(code=code)
+        except PasswordReset.DoesNotExist:
+            return False, 'There is no such reset code'
+
+        try:
+            user = User.objects.get(id=password_reset.user.id)
+        except User.DoesNotExist:
+            return False, 'User does not exist'
+
+        current_date_time = datetime.now()
+
+        # Конвертирование времени создания пароля в нужный формат и временную зону из settings
+        # (с временной зоной были проблемы)
+        local_tz = pytz.timezone(settings.TIME_ZONE)
+
+        password_reset_created_at_local = password_reset.created_at.astimezone(local_tz).replace(tzinfo=None)
+
+        # Вычисление разницы по дате и времени
+        date_time_difference = current_date_time - password_reset_created_at_local
+
+        if date_time_difference.days == 0:
+            hours_difference = date_time_difference.seconds // 3600
+            if hours_difference >= 12:
+                return False, 'The reset code is out of date'
+
+            password_1 = data['password_1']
+            password_2 = data['password_2']
+            if password_1 == password_2:
+                # Сохранение нового пароля пользователя и всех кодов сброса пользователя
+                user.set_password(password_1)
+                user.save()
+                PasswordReset.objects.filter(user=user).delete()
+                return True, 'Password has been changed'
+            return False, 'The passwords do not match'
+
+        else:
+            return False, 'The reset code is out of date'
+
+    @staticmethod
+    def password_reset_code(request):
+        email = request.data['email']
+
+        try:
+            user_id = User.objects.get(email=email).id
+        except User.DoesNotExist:
+            return False, 'User does not exist'
+
+        existing_ids = set(PasswordReset.objects.values_list('code', flat=True))
+        attempts = 0
+        max_attempts = 1000
+
+        code = 0
+
+        while attempts < max_attempts:
+            code = random.randint(113223, 998789)
+            if code not in existing_ids:
+                break
+            attempts += 1
+
+        data = {
+            'user': user_id,
+            'code': code
+        }
+
+        serializer = PasswordResetSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            send_reset_code_deletion_email(email, code)
+            return True, 'Reset code has been created'
+
+        return False, 'Something went wrong'
